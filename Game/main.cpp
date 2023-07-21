@@ -26,13 +26,15 @@ int main()
     bool gameStarted = false;
     bool Check_space = false;
     bool isPause = false;
-    bool showMenu = true;
+    float deltaTime = 0.0f;
+
 
     std::vector<Enemy> enemies;
 
     while (window.isOpen())
     {
         sf::Event event;
+
         while (window.pollEvent(event))
         {
             if (event.type == sf::Event::Closed)
@@ -48,6 +50,13 @@ int main()
             }
         }
 
+        deltaTime = clock.restart().asSeconds();
+
+        if (isPause) {
+            deltaTime = 0.0f;
+            continue;
+        }
+
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
             window.close();
         }
@@ -57,22 +66,20 @@ int main()
                 sf::Vector2f mousePosition(sf::Vector2f(sf::Mouse::getPosition(window)));
                 if (menu.isPressPlayButton(mousePosition)) {
                     gameStarted = true;
-                    showMenu = false;
                 }
             }
         }
 
-        if (!gameStarted||showMenu) {
+
+        if (!gameStarted) {
             window.clear();
             menu.draw(window);
             window.display();
             continue;
         }
 
-
         sf::Vector2f movement(0.0f, 0.0f);
         float speedmove = 200.0;
-        float deltaTime = clock.restart().asSeconds();
 
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
             if (!Check_space) {
@@ -136,13 +143,6 @@ int main()
         
         for (auto& enemy : enemies) {
             enemy.draw(window);
-        }
-
-        if (isPause) {
-            window.clear();
-            menu.draw(window);
-            window.display();
-            continue;
         }
 
         character.draw(window);

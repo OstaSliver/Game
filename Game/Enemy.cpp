@@ -1,4 +1,5 @@
 #include <SFML/Graphics.hpp>
+#include <iostream>
 #include "enemy.h"
 
 Enemy::Enemy(const sf::Vector2f& position, float radius, const sf::Color& color)
@@ -40,9 +41,9 @@ void Enemy::draw(sf::RenderWindow& window) {
 }
 
 void Enemy::moveToPlayer(const sf::Vector2f& playerPosition, float speed) {
+
     sf::Vector2f direction = playerPosition - circle.getPosition();
     float length = std::sqrt(direction.x * direction.x + direction.y * direction.y);
-
     direction /= length;
 
     circle.move(direction * speed);
