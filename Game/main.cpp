@@ -3,8 +3,9 @@
 #include <cstdlib>
 #include "player.h"
 #include "Enemy.h"
-#include "Map_gen.h"
 #include "Menu.h"
+#include "PauseMenu.h"
+
 
 #define SCREEN_WIDTH 1920
 #define SCREEN_HEIGHT 1080
@@ -17,17 +18,18 @@ int main()
     sf::RenderWindow window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Project Game");
 
     player character("C:/Study/CE_1/pro_fun/game/sprite/character_Down.png", sf::Vector2f(SCREEN_WIDTH/2,SCREEN_HEIGHT/2));
-    Map_gen back("C:/Study/CE_1/pro_fun/game/sprite/grass.png", 100, 100);
+    PauseMenu pauseMenu(window);
+
+
+
 
     sf::Clock clock;
-
     menu menu;
 
     bool gameStarted = false;
     bool Check_space = false;
     bool isPause = false;
     float deltaTime = 0.0f;
-
 
     std::vector<Enemy> enemies;
 
@@ -41,10 +43,9 @@ int main()
                 window.close();
 
             if (event.type == sf::Event::KeyPressed) {
-                if (event.key.code == sf::Keyboard::P) {
+                if (event.key.code == sf::Keyboard::Escape) {
                     if (gameStarted) {
                         isPause = !isPause;
-                        window.clear();
                     }
                 }
             }
@@ -52,14 +53,6 @@ int main()
 
         deltaTime = clock.restart().asSeconds();
 
-        if (isPause) {
-            deltaTime = 0.0f;
-            continue;
-        }
-
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
-            window.close();
-        }
 
         if (event.type == sf::Event::MouseButtonPressed) {
             if (event.mouseButton.button == sf::Mouse::Left) {
@@ -68,6 +61,14 @@ int main()
                     gameStarted = true;
                 }
             }
+        }
+
+        if (isPause) {
+
+            deltaTime = 0.0f;
+            pauseMenu.draw(window);
+            window.display();
+            continue;
         }
 
 
@@ -118,10 +119,10 @@ int main()
         sf::FloatRect playerBounds = character.getSprite().getGlobalBounds();
 
         for (int i = 0; i < enemies.size(); ++i) {
-            if (!isPause) {
+            
                 enemies[i].moveToPlayer(character.getSprite().getPosition(), 100.0f * deltaTime);
                 enemies[i].update(playerBounds);
-            }
+            
 
             if (enemies[i].colWithPlayer(playerBounds)) {
 
@@ -136,11 +137,7 @@ int main()
             }
         }
 
-        window.clear();
-
-        
-        back.draw(window);
-        
+        window.clear();        
         for (auto& enemy : enemies) {
             enemy.draw(window);
         }
