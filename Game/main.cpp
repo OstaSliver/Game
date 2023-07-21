@@ -15,13 +15,11 @@
 int main()
 {
     //sf::RenderWindow window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Project Game" ,sf::Style::Fullscreen);
-    sf::RenderWindow window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Project Game");
 
+    sf::RenderWindow window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Project Game");
+    sf::View view(sf::FloatRect(0.0f, 0.0f, SCREEN_WIDTH, SCREEN_HEIGHT));
     player character("C:/Study/CE_1/pro_fun/game/sprite/character_Down.png", sf::Vector2f(SCREEN_WIDTH/2,SCREEN_HEIGHT/2));
     PauseMenu pauseMenu(window);
-
-
-
 
     sf::Clock clock;
     menu menu;
@@ -57,6 +55,7 @@ int main()
         if (event.type == sf::Event::MouseButtonPressed) {
             if (event.mouseButton.button == sf::Mouse::Left) {
                 sf::Vector2f mousePosition(sf::Vector2f(sf::Mouse::getPosition(window)));
+
                 if (menu.isPressPlayButton(mousePosition)) {
                     gameStarted = true;
                 }
@@ -66,6 +65,7 @@ int main()
         if (isPause) {
 
             deltaTime = 0.0f;
+            pauseMenu.setPosition(character.getSprite().getPosition());
             pauseMenu.draw(window);
             window.display();
             continue;
@@ -88,8 +88,10 @@ int main()
                 
                     float radius = 30.0f;
                     sf::Vector2f position(sf::Vector2f(sf::Mouse::getPosition(window)));
+                    sf::Vector2f worldMousePosition = window.mapPixelToCoords(sf::Vector2i(position), view);
+
                     sf::Color color(rand() % 256, rand() % 256, rand() % 256);
-                    enemies.push_back(Enemy(position, radius, color));
+                    enemies.push_back(Enemy(worldMousePosition, radius, color));
                 
             }
         }
@@ -115,6 +117,8 @@ int main()
         
 
         character.move(movement);
+        view.setCenter(character.getSprite().getPosition());
+        window.setView(view);
 
         sf::FloatRect playerBounds = character.getSprite().getGlobalBounds();
 

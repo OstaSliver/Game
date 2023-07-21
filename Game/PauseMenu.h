@@ -1,19 +1,18 @@
-#pragma once
+#ifndef PAUSEMENU_H
+#define PAUSEMENU_H
 
 #include <SFML/Graphics.hpp>
-#include <iostream>
 
-class PauseMenu
-{
+class PauseMenu {
 public:
-	PauseMenu(sf::RenderWindow& window);
-	
-	void draw(sf::RenderWindow& window);
+    PauseMenu(sf::RenderWindow& window);
+    void setPosition(const sf::Vector2f& playerPosition);
+    void draw(sf::RenderWindow& window);
 
 private:
-	sf::Font font;
-	sf::Text pauseText;
-	sf::Text instructionText;
-
+    sf::Font font;
+    sf::Text pauseText;
+    sf::Text resumeText;
 };
 
+#endif // PAUSEMENU_H
