@@ -9,7 +9,7 @@ player::player(const std::string& texturePath, const sf::Vector2f& position) {
     }
 
     sprite.setTexture(texture);
-    sprite.setScale(0.5f,0.5f);
+    sprite.setScale(0.3f,0.3f);
     sprite.setPosition(position);
     sprite.setOrigin(sprite.getLocalBounds().width / 2, sprite.getLocalBounds().height / 2);
 
@@ -34,19 +34,20 @@ void player::setTexture(const std::string& texturePath) {
 
 void player::draw(sf::RenderWindow& window) {
     window.draw(sprite);
+
     sf::Font font;
     if (!font.loadFromFile("C:/Study/CE_1/pro_fun/game/font/Pixelpoint.ttf")) {
         std::cerr << "Error loading font file" << std::endl;
         return;
     }
 
-    sf::Text levelText("Level: " + std::to_string(level), font, 24);
-    sf::Text hpText("HP: " + std::to_string(HP) + " / " + std::to_string(max_HP), font, 24);
-    sf::Text expText("EXP: " + std::to_string(Exp) + " / " + std::to_string(max_Exp), font, 24);
+    sf::Text levelText("Level: " + std::to_string(level), font, 30);
+    sf::Text hpText("HP: " + std::to_string(HP) + " / " + std::to_string(max_HP), font, 30);
+    sf::Text expText("EXP: " + std::to_string(Exp) + " / " + std::to_string(max_Exp), font, 30);
 
     levelText.setPosition(10.0f, 10.0f);
-    hpText.setPosition(10.0f, 35.0f);
-    expText.setPosition(10.0f, 60.0f);
+    hpText.setPosition(10.0f, 40.0f);
+    expText.setPosition(10.0f, 70.0f);
 
     window.draw(levelText);
     window.draw(hpText);
@@ -68,7 +69,7 @@ void player::takeDamage(int damage) {
     HP -= damage;
 
     if (HP <= 0) {
-
+ 
     }
 }
 
@@ -81,5 +82,4 @@ void player::levelUp(int exp_incress){
         Exp -= max_Exp;
         max_Exp = (level*100);
     }
-
 }
