@@ -5,12 +5,40 @@
 #include "Enemy.h"
 #include "Menu.h"
 #include "PauseMenu.h"
+#include "playerHUD.h"
 
 
 #define SCREEN_WIDTH 1920
 #define SCREEN_HEIGHT 1080
 
+class Map {
+private:
+    int width; 
+    int height;
+    sf::Texture grassTexture;
 
+    std::vector<sf::Sprite> grassTiles;
+
+public:
+    Map(int w, int h) : width(w), height(h) {
+        grassTexture.loadFromFile("C:/study/CE_1/pro_fun/game/sprite/grass.png");
+        grassTiles.resize(width * height);
+
+        for (int x = 0; x < width; ++x) {
+            for (int y = 0; y < height; ++y) {
+                sf::Sprite grassSprite(grassTexture); 
+                grassSprite.setPosition(x * grassTexture.getSize().x, y * grassTexture.getSize().y); 
+                grassTiles[x + y * width] = grassSprite; 
+            }
+        }
+    }
+
+    void draw(sf::RenderWindow& window) {
+        for (auto& grass : grassTiles) {
+            window.draw(grass);
+        }
+    }
+};
 
 int main()
 {
@@ -20,6 +48,9 @@ int main()
     sf::View view(sf::FloatRect(0.0f, 0.0f, SCREEN_WIDTH, SCREEN_HEIGHT));
     player character("C:/Study/CE_1/pro_fun/game/sprite/character_Down.png", sf::Vector2f(SCREEN_WIDTH/2,SCREEN_HEIGHT/2));
     PauseMenu pauseMenu(window);
+    PlayerHUD playerHUD(character);
+
+    Map myMap(SCREEN_WIDTH , SCREEN_HEIGHT);
 
     sf::Clock clock;
     menu menu;
@@ -62,6 +93,17 @@ int main()
             }
         }
 
+        /*if (event.type == sf::Event::MouseMoved) {
+
+          sf::Vector2i mousePosition = sf::Mouse::getPosition(window);
+            sf::Vector2f worldMousePosition = window.mapPixelToCoords(mousePosition);
+
+            std::cout << "Mouse Position (Window): " << mousePosition.x << ", " << mousePosition.y << std::endl;
+            std::cout << "Mouse Position (World): " << worldMousePosition.x << ", " << worldMousePosition.y << std::endl;
+            std::cout << "Player Position: " << character.getSprite().getPosition().x << ", " << character.getSprite().getPosition().y << std::endl;
+            
+        }*/  
+
         if (isPause) {
 
             deltaTime = 0.0f;
@@ -88,10 +130,10 @@ int main()
                 
                     float radius = 30.0f;
                     sf::Vector2f position(sf::Vector2f(sf::Mouse::getPosition(window)));
-                    sf::Vector2f worldMousePosition = window.mapPixelToCoords(sf::Vector2i(position), view);
+                    sf::Vector2f worldPosition = window.mapPixelToCoords(sf::Vector2i(position), view);
 
                     sf::Color color(rand() % 256, rand() % 256, rand() % 256);
-                    enemies.push_back(Enemy(worldMousePosition, radius, color));
+                    enemies.push_back(Enemy(worldPosition, radius, color));
                 
             }
         }
@@ -146,6 +188,8 @@ int main()
             enemy.draw(window);
         }
 
+        myMap.draw(window);
+        playerHUD.draw(window);
         character.draw(window);
         window.display();
 

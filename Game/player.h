@@ -19,6 +19,8 @@ public:
     int getLevel();
     int getMaxHP();
     int getHP();
+    int getMaxExp();
+    int getExp();
 
 private:
     sf::Texture texture;

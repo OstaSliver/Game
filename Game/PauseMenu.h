@@ -6,7 +6,7 @@
 class PauseMenu {
 public:
     PauseMenu(sf::RenderWindow& window);
-    void setPosition(const sf::Vector2f& playerPosition);
+    void setPosition(const sf::Vector2f& playerPos);
     void draw(sf::RenderWindow& window);
 
 private:

@@ -1,6 +1,5 @@
-#include <SFML/Graphics.hpp>
 #include <iostream>
-
+#include <SFML/Graphics.hpp>
 #include "player.h"
 
 player::player(const std::string& texturePath, const sf::Vector2f& position) {
@@ -34,28 +33,13 @@ void player::setTexture(const std::string& texturePath) {
 
 void player::draw(sf::RenderWindow& window) {
     window.draw(sprite);
-
-    sf::Font font;
-    if (!font.loadFromFile("C:/Study/CE_1/pro_fun/game/font/Pixelpoint.ttf")) {
-        std::cerr << "Error loading font file" << std::endl;
-        return;
-    }
-
-    sf::Text levelText("Level: " + std::to_string(level), font, 30);
-    sf::Text hpText("HP: " + std::to_string(HP) + " / " + std::to_string(max_HP), font, 30);
-    sf::Text expText("EXP: " + std::to_string(Exp) + " / " + std::to_string(max_Exp), font, 30);
-
-    levelText.setPosition(10.0f, 10.0f);
-    hpText.setPosition(10.0f, 40.0f);
-    expText.setPosition(10.0f, 70.0f);
-
-    window.draw(levelText);
-    window.draw(hpText);
-    window.draw(expText);
 }
 
 sf::Sprite &player::getSprite() {
     return sprite;
+}
+int player::getLevel() {
+    return level;
 }
 int player::getMaxHP() {
     return max_HP;
@@ -63,6 +47,14 @@ int player::getMaxHP() {
 
 int player::getHP() {
     return HP;
+}
+
+int player::getMaxExp() {
+    return max_Exp;
+}
+
+int player::getExp() {
+    return Exp;
 }
 
 void player::takeDamage(int damage) {
