@@ -6,55 +6,31 @@
 #include "Menu.h"
 #include "PauseMenu.h"
 #include "playerHUD.h"
+#include "Map.h"
 
 
 #define SCREEN_WIDTH 1920
 #define SCREEN_HEIGHT 1080
-
-class Map {
-private:
-    int width; 
-    int height;
-    sf::Texture grassTexture;
-
-    std::vector<sf::Sprite> grassTiles;
-
-public:
-    Map(int w, int h) : width(w), height(h) {
-        grassTexture.loadFromFile("C:/study/CE_1/pro_fun/game/sprite/grass.png");
-        grassTiles.resize(width * height);
-
-        for (int x = 0; x < width; ++x) {
-            for (int y = 0; y < height; ++y) {
-                sf::Sprite grassSprite(grassTexture); 
-                grassSprite.setPosition(x * grassTexture.getSize().x, y * grassTexture.getSize().y); 
-                grassTiles[x + y * width] = grassSprite; 
-            }
-        }
-    }
-
-    void draw(sf::RenderWindow& window) {
-        for (auto& grass : grassTiles) {
-            window.draw(grass);
-        }
-    }
-};
 
 int main()
 {
     //sf::RenderWindow window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Project Game" ,sf::Style::Fullscreen);
 
     sf::RenderWindow window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Project Game");
-    sf::View view(sf::FloatRect(0.0f, 0.0f, SCREEN_WIDTH, SCREEN_HEIGHT));
-    player character("C:/Study/CE_1/pro_fun/game/sprite/character_Down.png", sf::Vector2f(SCREEN_WIDTH/2,SCREEN_HEIGHT/2));
+    player character("C:/Study/CE_1/pro_fun/game/sprite/character_Down.png", sf::Vector2f(9600.0f,5400.0f));
     PauseMenu pauseMenu(window);
     PlayerHUD playerHUD(character);
-
-    Map myMap(SCREEN_WIDTH , SCREEN_HEIGHT);
-
-    sf::Clock clock;
+    Map myMap(SCREEN_WIDTH /10, SCREEN_HEIGHT / 10);
     menu menu;
 
+
+    sf::Clock clock;
+    sf::Clock movementClock;
+    sf::View view(sf::FloatRect(0.0f, 0.0f, SCREEN_WIDTH, SCREEN_HEIGHT));
+    sf::View pausedView; // เก็บตำแหน่ง view ขณะที่เกมถูกค้างหยุด
+
+
+    bool isPause = false;
     bool gameStarted = false;
     bool Check_space = false;
     bool isPause = false;
@@ -75,6 +51,11 @@ int main()
                 if (event.key.code == sf::Keyboard::Escape) {
                     if (gameStarted) {
                         isPause = !isPause;
+                        if (!isPause) {
+                            movementClock.restart();
+                            pausedView = window.getView();
+
+                        }                          
                     }
                 }
             }
@@ -101,10 +82,13 @@ int main()
             std::cout << "Mouse Position (Window): " << mousePosition.x << ", " << mousePosition.y << std::endl;
             std::cout << "Mouse Position (World): " << worldMousePosition.x << ", " << worldMousePosition.y << std::endl;
             std::cout << "Player Position: " << character.getSprite().getPosition().x << ", " << character.getSprite().getPosition().y << std::endl;
-            
-        }*/  
+           
+        }*/
 
         if (isPause) {
+
+            pausedView = window.getView();
+
 
             deltaTime = 0.0f;
             pauseMenu.setPosition(character.getSprite().getPosition());
@@ -113,6 +97,7 @@ int main()
             continue;
         }
 
+        float movementDeltaTime = movementClock.restart().asSeconds();
 
         if (!gameStarted) {
             window.clear();
@@ -121,8 +106,7 @@ int main()
             continue;
         }
 
-        sf::Vector2f movement(0.0f, 0.0f);
-        float speedmove = 200.0;
+        
 
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
             if (!Check_space) {
@@ -140,26 +124,30 @@ int main()
         else {
             Check_space = false;
         }
+        
+        sf::Vector2f movement(0.0f, 0.0f);
+        float speedmove = 200.0;
 
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
-            movement.y -= speedmove * deltaTime;
+            movement.y -= speedmove * movementDeltaTime;
         }
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
-            movement.y += speedmove * deltaTime;
+            movement.y += speedmove * movementDeltaTime;
         }
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
             character.getSprite().setScale(0.3f, 0.3f);
-            movement.x += speedmove * deltaTime;
+            movement.x += speedmove * movementDeltaTime;
         }
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
             character.getSprite().setScale(-0.3f, 0.3f);
 
-            movement.x -= speedmove * deltaTime;
+            movement.x -= speedmove * movementDeltaTime;
         }
-        
+
 
         character.move(movement);
-        view.setCenter(character.getSprite().getPosition());
+
+        view.setCenter(static_cast<sf::Vector2f>(character.getSprite().getPosition()));
         window.setView(view);
 
         sf::FloatRect playerBounds = character.getSprite().getGlobalBounds();
@@ -174,7 +162,6 @@ int main()
 
                 character.takeDamage(10);
                 character.levelUp(20);
-                
             }
 
             if (enemies[i].isDead()) {
@@ -184,11 +171,13 @@ int main()
         }
 
         window.clear();        
+
+
+        myMap.draw(window);
         for (auto& enemy : enemies) {
             enemy.draw(window);
         }
 
-        myMap.draw(window);
         playerHUD.draw(window);
         character.draw(window);
         window.display();
