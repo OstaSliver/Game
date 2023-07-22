@@ -91,6 +91,7 @@ int main()
 
             deltaTime = 0.0f;
             myMap.draw(window);
+
             for (auto& enemy : enemies) {
                 enemy.draw(window);
             }
@@ -121,19 +122,19 @@ int main()
                 float spawnX, spawnY;
                 sf::Vector2f playerPosition = character.getSprite().getPosition();
                 switch (edge) {
-                case 0: // Top edge
+                case 0: // Top
                     spawnX = std::uniform_real_distribution<float>(playerPosition.x - SCREEN_WIDTH / 2, playerPosition.x + SCREEN_WIDTH / 2)(gen);
                     spawnY = (playerPosition.y - SCREEN_HEIGHT / 2 - ENEMY_SPAWN_MARGIN) - 60;
                     break;
-                case 1: // Right edge
+                case 1: // Right
                     spawnX = playerPosition.x + SCREEN_WIDTH / 2 + ENEMY_SPAWN_MARGIN;
                     spawnY = std::uniform_real_distribution<float>(playerPosition.y - SCREEN_HEIGHT / 2, playerPosition.y + SCREEN_HEIGHT / 2)(gen);
                     break;
-                case 2: // Bottom edge
+                case 2: // Bottom
                     spawnX = std::uniform_real_distribution<float>(playerPosition.x - SCREEN_WIDTH / 2, playerPosition.x + SCREEN_WIDTH / 2)(gen);
                     spawnY = playerPosition.y + SCREEN_HEIGHT / 2 + ENEMY_SPAWN_MARGIN;
                     break;
-                case 3: // Left edge
+                case 3: // Left
                     spawnX = (playerPosition.x - SCREEN_WIDTH / 2 - ENEMY_SPAWN_MARGIN) - 60;
                     spawnY = std::uniform_real_distribution<float>(playerPosition.y - SCREEN_HEIGHT / 2, playerPosition.y + SCREEN_HEIGHT / 2)(gen);
                     break;
@@ -142,10 +143,7 @@ int main()
                 }
 
                 sf::Vector2f spawnPosition(spawnX, spawnY);
-
-                float radius = 30.0f;
-                sf::Color color(rand() % 256, rand() % 256, rand() % 256);
-                enemies.push_back(Enemy(spawnPosition, radius, color));
+                enemies.push_back(Enemy(spawnPosition));
             }
         }
         else {
