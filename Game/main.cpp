@@ -1,6 +1,10 @@
 ﻿#include <SFML/Graphics.hpp>
 #include <iostream>
 #include <cstdlib>
+#include <ctime>
+#include <random>
+#include <cmath>
+#include <math.h>
 #include "player.h"
 #include "Enemy.h"
 #include "Menu.h"
@@ -11,32 +15,33 @@
 
 #define SCREEN_WIDTH 1920
 #define SCREEN_HEIGHT 1080
+#define ENEMY_SPAWN_MARGIN 0.0f
 
 int main()
 {
-    //sf::RenderWindow window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Project Game" ,sf::Style::Fullscreen);
+    sf::RenderWindow window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Project Game", sf::Style::Fullscreen);
+    //sf::RenderWindow window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Project Game");
 
-    sf::RenderWindow window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Project Game");
-    player character("C:/Study/CE_1/pro_fun/game/sprite/character_Down.png", sf::Vector2f(9600.0f,5400.0f));
+    player character("C:/Study/CE_1/pro_fun/game/sprite/character_Down.png", sf::Vector2f(9600.0f, 5400.0f));
+    // player character("C:/Study/CE_1/pro_fun/game/sprite/character_Down.png", sf::Vector2f(0.0f, 0.0f));
+
     PauseMenu pauseMenu(window);
     PlayerHUD playerHUD(character);
-    Map myMap(SCREEN_WIDTH /10, SCREEN_HEIGHT / 10);
+    Map myMap(SCREEN_WIDTH / 10, SCREEN_HEIGHT / 10);
     menu menu;
-
 
     sf::Clock clock;
     sf::Clock movementClock;
     sf::View view(sf::FloatRect(0.0f, 0.0f, SCREEN_WIDTH, SCREEN_HEIGHT));
-    sf::View pausedView; // เก็บตำแหน่ง view ขณะที่เกมถูกค้างหยุด
 
-
-    bool isPause = false;
     bool gameStarted = false;
     bool Check_space = false;
     bool isPause = false;
     float deltaTime = 0.0f;
 
     std::vector<Enemy> enemies;
+    std::random_device rd;
+    std::mt19937 gen(rd());
 
     while (window.isOpen())
     {
@@ -53,16 +58,13 @@ int main()
                         isPause = !isPause;
                         if (!isPause) {
                             movementClock.restart();
-                            pausedView = window.getView();
-
-                        }                          
+                        }
                     }
                 }
             }
         }
 
         deltaTime = clock.restart().asSeconds();
-
 
         if (event.type == sf::Event::MouseButtonPressed) {
             if (event.mouseButton.button == sf::Mouse::Left) {
@@ -82,15 +84,19 @@ int main()
             std::cout << "Mouse Position (Window): " << mousePosition.x << ", " << mousePosition.y << std::endl;
             std::cout << "Mouse Position (World): " << worldMousePosition.x << ", " << worldMousePosition.y << std::endl;
             std::cout << "Player Position: " << character.getSprite().getPosition().x << ", " << character.getSprite().getPosition().y << std::endl;
-           
+
         }*/
 
         if (isPause) {
 
-            pausedView = window.getView();
-
-
             deltaTime = 0.0f;
+            myMap.draw(window);
+            for (auto& enemy : enemies) {
+                enemy.draw(window);
+            }
+
+            playerHUD.draw(window);
+            character.draw(window);
             pauseMenu.setPosition(character.getSprite().getPosition());
             pauseMenu.draw(window);
             window.display();
@@ -106,25 +112,46 @@ int main()
             continue;
         }
 
-        
-
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
             if (!Check_space) {
-                Check_space = true;
-                
-                    float radius = 30.0f;
-                    sf::Vector2f position(sf::Vector2f(sf::Mouse::getPosition(window)));
-                    sf::Vector2f worldPosition = window.mapPixelToCoords(sf::Vector2i(position), view);
+                Check_space = false;
 
-                    sf::Color color(rand() % 256, rand() % 256, rand() % 256);
-                    enemies.push_back(Enemy(worldPosition, radius, color));
-                
+                int edge = std::uniform_int_distribution<int>(0, 3)(gen);
+
+                float spawnX, spawnY;
+                sf::Vector2f playerPosition = character.getSprite().getPosition();
+                switch (edge) {
+                case 0: // Top edge
+                    spawnX = std::uniform_real_distribution<float>(playerPosition.x - SCREEN_WIDTH / 2, playerPosition.x + SCREEN_WIDTH / 2)(gen);
+                    spawnY = (playerPosition.y - SCREEN_HEIGHT / 2 - ENEMY_SPAWN_MARGIN) - 60;
+                    break;
+                case 1: // Right edge
+                    spawnX = playerPosition.x + SCREEN_WIDTH / 2 + ENEMY_SPAWN_MARGIN;
+                    spawnY = std::uniform_real_distribution<float>(playerPosition.y - SCREEN_HEIGHT / 2, playerPosition.y + SCREEN_HEIGHT / 2)(gen);
+                    break;
+                case 2: // Bottom edge
+                    spawnX = std::uniform_real_distribution<float>(playerPosition.x - SCREEN_WIDTH / 2, playerPosition.x + SCREEN_WIDTH / 2)(gen);
+                    spawnY = playerPosition.y + SCREEN_HEIGHT / 2 + ENEMY_SPAWN_MARGIN;
+                    break;
+                case 3: // Left edge
+                    spawnX = (playerPosition.x - SCREEN_WIDTH / 2 - ENEMY_SPAWN_MARGIN) - 60;
+                    spawnY = std::uniform_real_distribution<float>(playerPosition.y - SCREEN_HEIGHT / 2, playerPosition.y + SCREEN_HEIGHT / 2)(gen);
+                    break;
+                default:
+                    break;
+                }
+
+                sf::Vector2f spawnPosition(spawnX, spawnY);
+
+                float radius = 30.0f;
+                sf::Color color(rand() % 256, rand() % 256, rand() % 256);
+                enemies.push_back(Enemy(spawnPosition, radius, color));
             }
         }
         else {
             Check_space = false;
         }
-        
+
         sf::Vector2f movement(0.0f, 0.0f);
         float speedmove = 200.0;
 
@@ -152,11 +179,13 @@ int main()
 
         sf::FloatRect playerBounds = character.getSprite().getGlobalBounds();
 
+        window.clear();
+
         for (int i = 0; i < enemies.size(); ++i) {
-            
-                enemies[i].moveToPlayer(character.getSprite().getPosition(), 100.0f * deltaTime);
-                enemies[i].update(playerBounds);
-            
+
+            enemies[i].moveToPlayer(character.getSprite().getPosition(), 100.0f * deltaTime);
+            enemies[i].update(playerBounds);
+
 
             if (enemies[i].colWithPlayer(playerBounds)) {
 
@@ -169,10 +198,6 @@ int main()
                 --i;
             }
         }
-
-        window.clear();        
-
-
         myMap.draw(window);
         for (auto& enemy : enemies) {
             enemy.draw(window);
