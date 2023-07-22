@@ -24,12 +24,6 @@ void player::move(const sf::Vector2f& val) {
     sprite.move(val);
 }
 
-void player::setTexture(const std::string& texturePath) {
-    if (!texture.loadFromFile(texturePath)) {
-        std::cerr << "Error loading player texture: " << texturePath << std::endl;
-    }
-    sprite.setTexture(texture);
-}
 
 void player::draw(sf::RenderWindow& window) {
     window.draw(sprite);

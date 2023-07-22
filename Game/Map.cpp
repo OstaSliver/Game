@@ -1,5 +1,7 @@
-#include <SFML/Graphics.hpp>
+﻿#include <SFML/Graphics.hpp>
 #include <iostream>
+#include <cstdlib>
+#include <ctime> 
 #include "Map.h"
 
 Map::Map(int w, int h) : width(w), height(h) {
@@ -17,7 +19,10 @@ Map::Map(int w, int h) : width(w), height(h) {
     }
 }
 
+
+
 void Map::draw(sf::RenderWindow& window) {
+
     for (auto& grass : grassTiles) {
         window.draw(grass);
     }

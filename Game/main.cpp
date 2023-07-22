@@ -19,11 +19,12 @@
 
 int main()
 {
+
     sf::RenderWindow window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Project Game", sf::Style::Fullscreen);
     //sf::RenderWindow window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Project Game");
 
     player character("C:/Study/CE_1/pro_fun/game/sprite/character_Down.png", sf::Vector2f(9600.0f, 5400.0f));
-    // player character("C:/Study/CE_1/pro_fun/game/sprite/character_Down.png", sf::Vector2f(0.0f, 0.0f));
+    //player character("C:/Study/CE_1/pro_fun/game/sprite/character_Down.png", sf::Vector2f(0.0f, 0.0f));
 
     PauseMenu pauseMenu(window);
     PlayerHUD playerHUD(character);
@@ -40,11 +41,15 @@ int main()
     float deltaTime = 0.0f;
 
     std::vector<Enemy> enemies;
+    std::vector<sf::Vector2f> enemiesPositions;
+
     std::random_device rd;
     std::mt19937 gen(rd());
 
     while (window.isOpen())
     {
+
+        
         sf::Event event;
 
         while (window.pollEvent(event))
@@ -65,7 +70,6 @@ int main()
         }
 
         deltaTime = clock.restart().asSeconds();
-
         if (event.type == sf::Event::MouseButtonPressed) {
             if (event.mouseButton.button == sf::Mouse::Left) {
                 sf::Vector2f mousePosition(sf::Vector2f(sf::Mouse::getPosition(window)));
@@ -168,34 +172,32 @@ int main()
 
             movement.x -= speedmove * movementDeltaTime;
         }
-
-
         character.move(movement);
+
 
         view.setCenter(static_cast<sf::Vector2f>(character.getSprite().getPosition()));
         window.setView(view);
 
         sf::FloatRect playerBounds = character.getSprite().getGlobalBounds();
-
-        window.clear();
-
-        for (int i = 0; i < enemies.size(); ++i) {
-
+        for (size_t i = 0; i < enemies.size(); ++i) {
+            enemiesPositions.push_back(enemies[i].getSprite().getPosition());
             enemies[i].moveToPlayer(character.getSprite().getPosition(), 100.0f * deltaTime);
             enemies[i].update(playerBounds);
 
-
             if (enemies[i].colWithPlayer(playerBounds)) {
-
                 character.takeDamage(10);
                 character.levelUp(20);
             }
+
 
             if (enemies[i].isDead()) {
                 enemies.erase(enemies.begin() + i);
                 --i;
             }
+
         }
+        window.clear();
+
         myMap.draw(window);
         for (auto& enemy : enemies) {
             enemy.draw(window);

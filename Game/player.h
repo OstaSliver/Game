@@ -8,7 +8,6 @@ class player
 public:
     player(const std::string& texturePath, const sf::Vector2f& position);
     void move(const sf::Vector2f& val);
-    void setTexture(const std::string& texturePath);
     void draw(sf::RenderWindow& window);
     void takeDamage(int damage);
     void levelUp(int exp_incress);
