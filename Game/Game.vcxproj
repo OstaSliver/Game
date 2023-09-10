@@ -130,6 +130,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="circledamage.cpp" />
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="Map.cpp" />
     <ClCompile Include="Menu.cpp" />
@@ -139,6 +140,7 @@
     <ClCompile Include="playerHUD.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="circledamage.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="Map.h" />
     <ClInclude Include="Menu.h" />

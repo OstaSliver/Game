@@ -51,11 +51,14 @@ int player::getExp() {
     return Exp;
 }
 
+bool player::GetDead(){
+    return isDead;
+}
 void player::takeDamage(int damage) {
     HP -= damage;
 
     if (HP <= 0) {
- 
+        this->isDead = true;
     }
 }
 
@@ -69,3 +72,6 @@ void player::levelUp(int exp_incress){
         max_Exp = (level*100);
     }
 }
+
+
+

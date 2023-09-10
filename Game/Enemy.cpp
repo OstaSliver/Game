@@ -44,13 +44,12 @@ void Enemy::update(const sf::FloatRect& playerBounds) {
 void Enemy::takeDamage(int damage) { 
     currentHP -= damage;
 
-
     if (currentHP <= 0) {
         dead = true;
     }
 }
 
-bool Enemy::colWithPlayer(const sf::FloatRect& playerBounds)  {
+bool Enemy::colWithPlayer(const sf::FloatRect& playerBounds){
     return sprite.getGlobalBounds().intersects(playerBounds);
 }
 
@@ -65,9 +64,12 @@ void Enemy::draw(sf::RenderWindow& window) {
 
 void Enemy::moveToPlayer(const sf::Vector2f& playerPosition, float speed) {
 
+
     sf::Vector2f direction = playerPosition - sprite.getPosition();
+
     float length = std::sqrt(direction.x * direction.x + direction.y * direction.y);
     direction /= length;
+
 
     sprite.move(direction * speed);
 }

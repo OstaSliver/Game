@@ -2,6 +2,7 @@
 
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include "Enemy.h"
 
 class player
 {
@@ -11,7 +12,7 @@ public:
     void draw(sf::RenderWindow& window);
     void takeDamage(int damage);
     void levelUp(int exp_incress);
-
+    void atk(int baseDamege);
     sf::Sprite &getSprite();
 
 
@@ -20,11 +21,14 @@ public:
     int getHP();
     int getMaxExp();
     int getExp();
+    bool GetDead();
 
 private:
     sf::Texture texture;
     sf::Sprite sprite;
+
     int level;
     int max_HP,HP;
     int max_Exp,Exp;
+    bool isDead = false;
 };
