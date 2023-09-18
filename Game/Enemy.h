@@ -11,8 +11,6 @@ public:
     void draw(sf::RenderWindow& window);
     bool colWithPlayer(const sf::FloatRect& playerBounds);
     void moveToPlayer(const sf::Vector2f& pos_Player, float speed);
-
-    void fixCol();
     sf::Sprite& getSprite();
 
 private:

@@ -1,6 +1,7 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include "player.h"
+#include "Item.h"
 
 player::player(const std::string& texturePath, const sf::Vector2f& position) {
     if (!texture.loadFromFile(texturePath)) {
@@ -32,6 +33,13 @@ void player::draw(sf::RenderWindow& window) {
 sf::Sprite &player::getSprite() {
     return sprite;
 }
+
+void player::collectItem(Item& item) {
+    if (item.getType() == ItemType::EXP) {
+        levelUp(50);
+    }
+}
+
 int player::getLevel() {
     return level;
 }
@@ -72,6 +80,4 @@ void player::levelUp(int exp_incress){
         max_Exp = (level*100);
     }
 }
-
-
 

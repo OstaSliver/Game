@@ -3,6 +3,8 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include "Enemy.h"
+#include "player.h"
+#include "Item.h"
 
 class player
 {
@@ -14,7 +16,7 @@ public:
     void levelUp(int exp_incress);
     void atk(int baseDamege);
     sf::Sprite &getSprite();
-
+    void collectItem(Item& item);
 
     int getLevel();
     int getMaxHP();
@@ -22,6 +24,7 @@ public:
     int getMaxExp();
     int getExp();
     bool GetDead();
+    
 
 private:
     sf::Texture texture;

@@ -14,7 +14,7 @@
 #include "playerHUD.h"
 #include "Map.h"
 #include "circledamage.h"
-
+#include "Item.h"
 
 
 
@@ -53,7 +53,7 @@ int main()
     std::vector<Enemy> enemies;
     std::vector<sf::Vector2f> enemiesPositions;
     std::vector<circledamage> damageCircles;
-
+    std::vector<Item> item;
 
     int MAX_circle = 5;
     std::random_device rd;
@@ -117,7 +117,9 @@ int main()
             for (auto& enemy : enemies) {
                 enemy.draw(window);
             }
-
+            for (auto it = damageCircles.begin(); it != damageCircles.end(); it++) {
+                    it->draw(window);
+            }
             playerHUD.draw(window);
             character.draw(window);
             pauseMenu.setPosition(character.getSprite().getPosition());
@@ -135,9 +137,9 @@ int main()
             continue;
         }
 
-        if (character.GetDead()) {
+        /*if (character.GetDead()) {
             window.close();
-        }
+        }*/
 
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
             if (!Check_space) {
@@ -199,10 +201,20 @@ int main()
 
             //sf::Vector2f mouseCircle = window.mapPixelToCoords(sf::Mouse::getPosition(window));
             //std::uniform_real_distribution<float>(character.getSprite().getPosition().x - SCREEN_WIDTH / 2, character.getSprite().getPosition().x + SCREEN_WIDTH / 2)(gen);
-            sf::Vector2f posCircle(std::uniform_real_distribution<float>(character.getSprite().getPosition().x - SCREEN_WIDTH / 3, character.getSprite().getPosition().x + SCREEN_WIDTH / 3)(gen), std::uniform_real_distribution<float>(character.getSprite().getPosition().y - SCREEN_HEIGHT / 3, character.getSprite().getPosition().y + SCREEN_HEIGHT / 3)(gen));
-            circledamage damageCircle(100, 3.0f);
+
+            //sf::Vector2f posCircle(std::uniform_real_distribution<float>(character.getSprite().getPosition().x - SCREEN_WIDTH / 3, character.getSprite().getPosition().x + SCREEN_WIDTH / 3)(gen), std::uniform_real_distribution<float>(character.getSprite().getPosition().y - SCREEN_HEIGHT / 3, character.getSprite().getPosition().y + SCREEN_HEIGHT / 3)(gen));
+            if (enemies.size() != 0) {
+                int i = rand() % enemies.size();
+                sf::Vector2f posCircle(enemies[i].getSprite().getPosition().x, enemies[i].getSprite().getPosition().y);
+                circledamage damageCircle(100, 3.0f);
+                damageCircle.drawCircle(posCircle);
+                damageCircles.push_back(damageCircle);
+
+            }
+      
+            /*circledamage damageCircle(100, 3.0f);
             damageCircle.drawCircle(posCircle);
-            damageCircles.push_back(damageCircle);
+            damageCircles.push_back(damageCircle);*/
 
         }
         
@@ -225,8 +237,8 @@ int main()
                 character.levelUp(20);
             }
 
-
             if (enemies[i].isDead()) {
+                item.push_back(Item(enemies[i].getSprite().getPosition(), ItemType::EXP));
                 enemies.erase(enemies.begin() + i);
                 --i;
             }
@@ -249,6 +261,18 @@ int main()
                 it = damageCircles.erase(it);
             }
         }
+
+        for (auto it = item.begin(); it != item.end();) {
+            if (it->getPosition().getGlobalBounds().intersects(playerBounds)) {
+                character.collectItem(*it);
+                it = item.erase(it);
+            }
+            else {
+                it->draw(window);
+                ++it;
+            }
+        }
+
 
         character.draw(window);
 

@@ -2,27 +2,9 @@
 #include <iostream>
 #include "enemy.h"
 
-sf::Vector2f checkCollision(const sf::Sprite& sprite1, const sf::Sprite& sprite2) {
 
-    if (sprite1.getGlobalBounds().intersects(sprite2.getGlobalBounds())) {
-
-        sf::Vector2f direction = sprite2.getPosition() - sprite1.getPosition();
-        float length = std::sqrt(direction.x * direction.x + direction.y * direction.y);
-        direction /= length;
-
-        float offset = (sprite1.getGlobalBounds().width + sprite2.getGlobalBounds().width) * 0.7f;
-        sf::Vector2f newPosition = sprite2.getPosition() + direction * offset;
-
-        return newPosition;
-    }
-
-    return sprite1.getPosition();
-}
-
-Enemy::Enemy(const sf::Vector2f& position)
-    : maxHP(100), currentHP(100), dead(false)
+Enemy::Enemy(const sf::Vector2f& position): maxHP(100), currentHP(100), dead(false)
 {
-
     if (!texture.loadFromFile("Resource/monster/slime.png")){
         std::cerr << "Error loading texture monster" << std::endl;
         return;
@@ -53,7 +35,8 @@ bool Enemy::colWithPlayer(const sf::FloatRect& playerBounds){
     return sprite.getGlobalBounds().intersects(playerBounds);
 }
 
-bool Enemy::isDead()  {
+bool Enemy::isDead(){
+
     return dead;
 }
 
