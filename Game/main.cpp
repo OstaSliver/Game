@@ -164,7 +164,7 @@ int main()
             goto restart;
         }
 
-            if (enemies.size() <= 2) {
+            if (enemies.size() <= 100) {
                 
 
                 int edge = std::uniform_int_distribution<int>(0, 3)(gen);
@@ -293,8 +293,8 @@ int main()
 
         for (auto it = fireballs.begin(); it != fireballs.end();) {
             it->updata(deltaTime);
-                it->draw(window);
-                ++it;
+            it->draw(window);
+          ++it;
         }
 
         character.draw(window);

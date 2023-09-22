@@ -9,10 +9,10 @@ private:
 	sf::Vector2f Target;
 
 	sf::Sprite sprite;
-	sf::Texture texture;
+	sf::Texture texture[5];
 	sf::Vector2f direction;
 
-	float elaped = 0.0;
+	float elaped;
 	int Animation = 0;
 };
 
