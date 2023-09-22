@@ -6,7 +6,7 @@
 
 Map::Map(int w, int h) : width(w), height(h) {
 
-    grassTexture.loadFromFile("C:/study/CE_1/pro_fun/game/sprite/grass.png");
+    grassTexture.loadFromFile("Resource/sprite/grass.png");
     grassTiles.resize(width * height);
 
     for (int x = 0; x < width; ++x) {

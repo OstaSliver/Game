@@ -15,4 +15,3 @@ private:
 	sf::Font font;
 	sf::RectangleShape play_button;
 };
-

@@ -5,7 +5,7 @@
 
 Enemy::Enemy(const sf::Vector2f& position): maxHP(100), currentHP(100), dead(false)
 {
-    if (!texture.loadFromFile("Resource/monster/slime.png")){
+    if (!texture.loadFromFile("Resource/sprite/monster/slime.png")){
         std::cerr << "Error loading texture monster" << std::endl;
         return;
     }

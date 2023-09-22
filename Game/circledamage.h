@@ -26,4 +26,3 @@ public:
 	void drawCircle(sf::Vector2f& pos);
 
 };
-

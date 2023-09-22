@@ -10,6 +10,8 @@ player::player(const std::string& texturePath, const sf::Vector2f& position) {
 
     sprite.setTexture(texture);
     sprite.setScale(0.3f,0.3f);
+    //sprite.setScale(4.f,4.f);
+
     sprite.setPosition(position);
     sprite.setOrigin(sprite.getLocalBounds().width / 2, sprite.getLocalBounds().height / 2);
 
@@ -21,8 +23,23 @@ player::player(const std::string& texturePath, const sf::Vector2f& position) {
 
 }
 
-void player::move(const sf::Vector2f& val) {
-    sprite.move(val);
+void player::move(sf::Vector2f movement, float deltaTime) {
+    float speedmove = 200.0;
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
+        movement.y -= speedmove * deltaTime;
+    }
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
+        movement.y += speedmove * deltaTime;
+    }
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
+        sprite.setScale(0.3f, 0.3f);
+        movement.x += speedmove * deltaTime;
+    }
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
+        sprite.setScale(-0.3f, 0.3f);
+        movement.x -= speedmove * deltaTime;
+    }
+    this->sprite.move(movement);
 }
 
 

@@ -1,7 +1,7 @@
 #include <SFML/Graphics.hpp>
 #include <math.h>
 #include "circledamage.h"
-
+#include <iostream>
 
 circledamage::circledamage(int radius, float duration) {
 	circle.setRadius(100);
@@ -22,12 +22,8 @@ void circledamage::draw(sf::RenderWindow& window) {
 
 }
 
+
 bool circledamage::isEnemyInCircle(Enemy& enemy) {
-
-	if (!active) {
-		return false;
-	}
-
 	sf::Vector2f enemy_position = enemy.getSprite().getPosition();
 	float distanec = std::sqrt(pow(enemy_position.x - circle.getPosition().x, 2) + pow(enemy_position.y - circle.getPosition().y, 2));
 
@@ -47,9 +43,11 @@ bool circledamage::isActive() {
 void circledamage::update(float& deltaTime) {
 	if (active) {
 		elapsed += deltaTime;
+		//std::cout << elapsed << std::endl;
 		if (elapsed >= duration) {
 			active = false;
 		}
+
 	}
 }
 

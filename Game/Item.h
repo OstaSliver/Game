@@ -19,4 +19,3 @@ public:
     void draw(sf::RenderWindow& window);
     sf::CircleShape getPosition();
 };
-

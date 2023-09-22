@@ -3,7 +3,7 @@
 
 PauseMenu::PauseMenu(sf::RenderWindow& window)
 {
-    if (!font.loadFromFile("C:/Study/CE_1/pro_fun/game/font/Pixelpoint.ttf")) {
+    if (!font.loadFromFile("Resource/font/Pixelpoint.ttf")) {
         std::cerr << "Error loading font!" << std::endl;
     }
 

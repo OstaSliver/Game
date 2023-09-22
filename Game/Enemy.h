@@ -15,7 +15,7 @@ public:
 
 private:
     sf::Sprite sprite;
-    sf::CircleShape circle;
+    //sf::CircleShape circle;
     sf::Texture texture;
 
     int maxHP;

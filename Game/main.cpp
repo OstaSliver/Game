@@ -15,23 +15,21 @@
 #include "Map.h"
 #include "circledamage.h"
 #include "Item.h"
+#include "FireBall.h"
 
 
 
 #define SCREEN_WIDTH 1920
-//#define SCREEN_WIDTH 640
-
 #define SCREEN_HEIGHT 1080
 #define ENEMY_SPAWN_MARGIN 0.0f
 
 int main()
 {
-
-    sf::RenderWindow window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Project Game", sf::Style::Fullscreen);
-   // sf::RenderWindow window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Project Game");
-
-    player character("C:/Study/CE_1/pro_fun/game/sprite/character_Down.png", sf::Vector2f(9600.0f, 5400.0f));
-    //player character("C:/Study/CE_1/pro_fun/game/sprite/character_Down.png", sf::Vector2f(0.0f, 0.0f));
+    restart:
+   // sf::RenderWindow window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Project Game", sf::Style::Fullscreen);
+   sf::RenderWindow window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Project Game");
+    
+    player character("Resource/sprite/character_Down.png", sf::Vector2f(9600.0f, 5400.0f));
 
     PauseMenu pauseMenu(window);
     PlayerHUD playerHUD(character);
@@ -44,6 +42,10 @@ int main()
     sf::View view(sf::FloatRect(0.0f, 0.0f, SCREEN_WIDTH, SCREEN_HEIGHT));
     sf::Time cooldown;
 
+    const sf::Time targetFrameTime = sf::seconds(1.0f / 60.0f); 
+    sf::Clock frameClock;
+
+
     bool gameStarted = false;
     bool Check_space = false;
     bool isPause = false;
@@ -54,12 +56,11 @@ int main()
     std::vector<sf::Vector2f> enemiesPositions;
     std::vector<circledamage> damageCircles;
     std::vector<Item> item;
+    std::vector<FireBall> fireballs;
 
-    int MAX_circle = 5;
     std::random_device rd;
     std::mt19937 gen(rd());
 
-    //const float ENEMY_DAMAGE_RADIUS = 100.0f;
     while (window.isOpen())
     {
 
@@ -68,8 +69,10 @@ int main()
 
         while (window.pollEvent(event))
         {
-            if (event.type == sf::Event::Closed)
+            if (event.type == sf::Event::Closed) {
                 window.close();
+            }
+                
 
             if (event.type == sf::Event::KeyPressed) {
                 if (event.key.code == sf::Keyboard::Escape) {
@@ -79,15 +82,29 @@ int main()
                             movementClock.restart();
                         }
                     }
-                    if (event.key.code == sf::Keyboard::M) {
-                        window.close();
-                    }
                 }
+
+                if (event.key.code == sf::Keyboard::M) {
+                    goto restart;
+                }
+
+
             }
         }
 
         deltaTime = clock.restart().asSeconds();
         cooldown.asSeconds();
+
+
+        sf::Time elapsed = frameClock.restart();
+
+        if (elapsed < targetFrameTime)
+        {
+            sf::sleep(targetFrameTime - elapsed);
+            elapsed = targetFrameTime; 
+        }
+
+
         if (event.type == sf::Event::MouseButtonPressed) {
             if (event.mouseButton.button == sf::Mouse::Left) {
                 sf::Vector2f mousePosition(sf::Vector2f(sf::Mouse::getPosition(window)));
@@ -120,6 +137,12 @@ int main()
             for (auto it = damageCircles.begin(); it != damageCircles.end(); it++) {
                     it->draw(window);
             }
+            for (auto it = item.begin(); it != item.end();it++) {
+                it->draw(window);
+
+            }
+
+
             playerHUD.draw(window);
             character.draw(window);
             pauseMenu.setPosition(character.getSprite().getPosition());
@@ -137,13 +160,12 @@ int main()
             continue;
         }
 
-        /*if (character.GetDead()) {
-            window.close();
-        }*/
+        if (character.GetDead()) {
+            goto restart;
+        }
 
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
-            if (!Check_space) {
-                Check_space = false;
+            if (enemies.size() <= 2) {
+                
 
                 int edge = std::uniform_int_distribution<int>(0, 3)(gen);
 
@@ -173,42 +195,34 @@ int main()
                 sf::Vector2f spawnPosition(spawnX, spawnY);
                 enemies.push_back(Enemy(spawnPosition));
             }
-        }
-        else {
-            Check_space = false;
-        }
+        
 
         sf::Vector2f movement(0.0f, 0.0f);
-        float speedmove = 200.0;
-
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
-            movement.y -= speedmove * movementDeltaTime;
-        }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
-            movement.y += speedmove * movementDeltaTime;
-        }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
-            character.getSprite().setScale(0.3f, 0.3f);
-            movement.x += speedmove * movementDeltaTime;
-        }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
-            character.getSprite().setScale(-0.3f, 0.3f);
-
-            movement.x -= speedmove * movementDeltaTime;
-        }
+       
 
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z)) {
 
             //sf::Vector2f mouseCircle = window.mapPixelToCoords(sf::Mouse::getPosition(window));
             //std::uniform_real_distribution<float>(character.getSprite().getPosition().x - SCREEN_WIDTH / 2, character.getSprite().getPosition().x + SCREEN_WIDTH / 2)(gen);
-
             //sf::Vector2f posCircle(std::uniform_real_distribution<float>(character.getSprite().getPosition().x - SCREEN_WIDTH / 3, character.getSprite().getPosition().x + SCREEN_WIDTH / 3)(gen), std::uniform_real_distribution<float>(character.getSprite().getPosition().y - SCREEN_HEIGHT / 3, character.getSprite().getPosition().y + SCREEN_HEIGHT / 3)(gen));
+
             if (enemies.size() != 0) {
                 int i = rand() % enemies.size();
-                sf::Vector2f posCircle(enemies[i].getSprite().getPosition().x, enemies[i].getSprite().getPosition().y);
+
+                //circle dmg
+
+                /*sf::Vector2f posCircle(enemies[i].getSprite().getPosition().x, enemies[i].getSprite().getPosition().y);
                 circledamage damageCircle(100, 3.0f);
                 damageCircle.drawCircle(posCircle);
-                damageCircles.push_back(damageCircle);
+                damageCircles.push_back(damageCircle);*/
+                
+                //fireball
+
+                sf::Vector2f posTarget(enemies[i].getSprite().getPosition().x, enemies[i].getSprite().getPosition().y);
+                sf::Vector2f posPlayer(character.getSprite().getPosition().x, character.getSprite().getPosition().y);
+                FireBall fireball(posPlayer, posTarget);
+                fireballs.push_back(fireball);
+
 
             }
       
@@ -219,7 +233,7 @@ int main()
         }
         
 
-        character.move(movement);
+        character.move(movement,deltaTime);
 
 
         view.setCenter(static_cast<sf::Vector2f>(character.getSprite().getPosition()));
@@ -238,7 +252,12 @@ int main()
             }
 
             if (enemies[i].isDead()) {
-                item.push_back(Item(enemies[i].getSprite().getPosition(), ItemType::EXP));
+                int rate = rand() % 100;
+                if (rate <= 20) {
+                    item.push_back(Item(enemies[i].getSprite().getPosition(), ItemType::EXP));
+                }
+                    
+               
                 enemies.erase(enemies.begin() + i);
                 --i;
             }
@@ -247,7 +266,6 @@ int main()
         window.clear();
 
         myMap.draw(window);
-        playerHUD.draw(window);
         character.draw(window);
 
         for (auto it = damageCircles.begin(); it != damageCircles.end();) {
@@ -273,6 +291,11 @@ int main()
             }
         }
 
+        for (auto it = fireballs.begin(); it != fireballs.end();) {
+            it->updata(deltaTime);
+                it->draw(window);
+                ++it;
+        }
 
         character.draw(window);
 
@@ -286,8 +309,8 @@ int main()
             enemy.draw(window);
         }
 
-        window.display();
+        playerHUD.draw(window);
 
+        window.display();
     }
-    return 0;
 }
