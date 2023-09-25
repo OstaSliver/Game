@@ -14,5 +14,4 @@ private:
     sf::Text levelText;
     sf::Text hpText;
     sf::Text expText;
-    sf::Text FPS;
 };

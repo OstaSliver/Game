@@ -79,6 +79,7 @@ int player::getExp() {
 bool player::GetDead(){
     return isDead;
 }
+
 void player::takeDamage(int damage) {
     HP -= damage;
 
@@ -94,7 +95,7 @@ void player::levelUp(int exp_incress){
         max_HP += 20;
         HP = max_HP;
         Exp -= max_Exp;
-        max_Exp = (level*100);
+        max_Exp = (level*750);
     }
 }
 

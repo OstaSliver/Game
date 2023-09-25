@@ -9,7 +9,7 @@ class Item
 {
 private:
     sf::Vector2f position;
-    sf::CircleShape exp;
+    sf::Sprite exp;
     ItemType type;
 
 
@@ -17,5 +17,5 @@ public:
     Item(const sf::Vector2f& pos, ItemType itemType);
     ItemType getType();
     void draw(sf::RenderWindow& window);
-    sf::CircleShape getPosition();
+    sf::Sprite getPosition();
 };

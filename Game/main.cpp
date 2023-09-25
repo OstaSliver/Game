@@ -16,11 +16,14 @@
 #include "circledamage.h"
 #include "Item.h"
 #include "FireBall.h"
-
+#include "Ability.h"
 
 
 #define SCREEN_WIDTH 1920
 #define SCREEN_HEIGHT 1080
+
+
+
 #define ENEMY_SPAWN_MARGIN 0.0f
 
 int main()
@@ -35,7 +38,7 @@ int main()
     PlayerHUD playerHUD(character);
     Map myMap(SCREEN_WIDTH / 10, SCREEN_HEIGHT / 10);
     menu menu;
-
+    Ability Fireball(0.5);
 
     sf::Clock clock;
     sf::Clock movementClock;
@@ -61,10 +64,11 @@ int main()
     std::random_device rd;
     std::mt19937 gen(rd());
 
+
     while (window.isOpen())
     {
 
-        
+
         sf::Event event;
 
         while (window.pollEvent(event))
@@ -72,7 +76,7 @@ int main()
             if (event.type == sf::Event::Closed) {
                 window.close();
             }
-                
+
 
             if (event.type == sf::Event::KeyPressed) {
                 if (event.key.code == sf::Keyboard::Escape) {
@@ -101,7 +105,7 @@ int main()
         if (elapsed < targetFrameTime)
         {
             sf::sleep(targetFrameTime - elapsed);
-            elapsed = targetFrameTime; 
+            elapsed = targetFrameTime;
         }
 
 
@@ -135,9 +139,9 @@ int main()
                 enemy.draw(window);
             }
             for (auto it = damageCircles.begin(); it != damageCircles.end(); it++) {
-                    it->draw(window);
+                it->draw(window);
             }
-            for (auto it = item.begin(); it != item.end();it++) {
+            for (auto it = item.begin(); it != item.end(); it++) {
                 it->draw(window);
 
             }
@@ -161,44 +165,44 @@ int main()
         }
 
         if (character.GetDead()) {
-            goto restart;
+            //goto restart;
         }
 
-            if (enemies.size() <= 100) {
-                
+        if (enemies.size() <= 100) {
 
-                int edge = std::uniform_int_distribution<int>(0, 3)(gen);
 
-                float spawnX, spawnY;
-                sf::Vector2f playerPosition = character.getSprite().getPosition();
-                switch (edge) {
-                case 0: // Top
-                    spawnX = std::uniform_real_distribution<float>(playerPosition.x - SCREEN_WIDTH / 2, playerPosition.x + SCREEN_WIDTH / 2)(gen);
-                    spawnY = (playerPosition.y - SCREEN_HEIGHT / 2 - ENEMY_SPAWN_MARGIN) - 60;
-                    break;
-                case 1: // Right
-                    spawnX = playerPosition.x + SCREEN_WIDTH / 2 + ENEMY_SPAWN_MARGIN;
-                    spawnY = std::uniform_real_distribution<float>(playerPosition.y - SCREEN_HEIGHT / 2, playerPosition.y + SCREEN_HEIGHT / 2)(gen);
-                    break;
-                case 2: // Bottom
-                    spawnX = std::uniform_real_distribution<float>(playerPosition.x - SCREEN_WIDTH / 2, playerPosition.x + SCREEN_WIDTH / 2)(gen);
-                    spawnY = playerPosition.y + SCREEN_HEIGHT / 2 + ENEMY_SPAWN_MARGIN;
-                    break;
-                case 3: // Left
-                    spawnX = (playerPosition.x - SCREEN_WIDTH / 2 - ENEMY_SPAWN_MARGIN) - 60;
-                    spawnY = std::uniform_real_distribution<float>(playerPosition.y - SCREEN_HEIGHT / 2, playerPosition.y + SCREEN_HEIGHT / 2)(gen);
-                    break;
-                default:
-                    break;
-                }
+            int edge = std::uniform_int_distribution<int>(0, 3)(gen);
 
-                sf::Vector2f spawnPosition(spawnX, spawnY);
-                enemies.push_back(Enemy(spawnPosition));
+            float spawnX, spawnY;
+            sf::Vector2f playerPosition = character.getSprite().getPosition();
+            switch (edge) {
+            case 0: // Top
+                spawnX = std::uniform_real_distribution<float>(playerPosition.x - SCREEN_WIDTH / 2, playerPosition.x + SCREEN_WIDTH / 2)(gen);
+                spawnY = (playerPosition.y - SCREEN_HEIGHT / 2 - ENEMY_SPAWN_MARGIN) - 60;
+                break;
+            case 1: // Right
+                spawnX = playerPosition.x + SCREEN_WIDTH / 2 + ENEMY_SPAWN_MARGIN;
+                spawnY = std::uniform_real_distribution<float>(playerPosition.y - SCREEN_HEIGHT / 2, playerPosition.y + SCREEN_HEIGHT / 2)(gen);
+                break;
+            case 2: // Bottom
+                spawnX = std::uniform_real_distribution<float>(playerPosition.x - SCREEN_WIDTH / 2, playerPosition.x + SCREEN_WIDTH / 2)(gen);
+                spawnY = playerPosition.y + SCREEN_HEIGHT / 2 + ENEMY_SPAWN_MARGIN;
+                break;
+            case 3: // Left
+                spawnX = (playerPosition.x - SCREEN_WIDTH / 2 - ENEMY_SPAWN_MARGIN) - 60;
+                spawnY = std::uniform_real_distribution<float>(playerPosition.y - SCREEN_HEIGHT / 2, playerPosition.y + SCREEN_HEIGHT / 2)(gen);
+                break;
+            default:
+                break;
             }
-        
+
+            sf::Vector2f spawnPosition(spawnX, spawnY);
+            enemies.push_back(Enemy(spawnPosition));
+        }
+
 
         sf::Vector2f movement(0.0f, 0.0f);
-       
+
 
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z)) {
 
@@ -206,41 +210,57 @@ int main()
             //std::uniform_real_distribution<float>(character.getSprite().getPosition().x - SCREEN_WIDTH / 2, character.getSprite().getPosition().x + SCREEN_WIDTH / 2)(gen);
             //sf::Vector2f posCircle(std::uniform_real_distribution<float>(character.getSprite().getPosition().x - SCREEN_WIDTH / 3, character.getSprite().getPosition().x + SCREEN_WIDTH / 3)(gen), std::uniform_real_distribution<float>(character.getSprite().getPosition().y - SCREEN_HEIGHT / 3, character.getSprite().getPosition().y + SCREEN_HEIGHT / 3)(gen));
 
-            if (enemies.size() != 0) {
+            if (enemies.size() > 0) {
                 int i = rand() % enemies.size();
 
-                //circle dmg
 
-                /*sf::Vector2f posCircle(enemies[i].getSprite().getPosition().x, enemies[i].getSprite().getPosition().y);
-                circledamage damageCircle(100, 3.0f);
-                damageCircle.drawCircle(posCircle);
-                damageCircles.push_back(damageCircle);*/
-                
-                //fireball
+                std::uniform_real_distribution<float> distX(enemies[i].getSprite().getPosition().x - SCREEN_WIDTH / 2, enemies[i].getSprite().getPosition().x + SCREEN_WIDTH / 2);
+                std::uniform_real_distribution<float> distY(enemies[i].getSprite().getPosition().y - SCREEN_HEIGHT / 2, enemies[i].getSprite().getPosition().y + SCREEN_HEIGHT / 2);
 
-                sf::Vector2f posTarget(enemies[i].getSprite().getPosition().x, enemies[i].getSprite().getPosition().y);
+                sf::Vector2f posTarget(distX(gen), distY(gen));
                 sf::Vector2f posPlayer(character.getSprite().getPosition().x, character.getSprite().getPosition().y);
                 FireBall fireball(posPlayer, posTarget);
                 fireballs.push_back(fireball);
 
 
             }
-      
+
             /*circledamage damageCircle(100, 3.0f);
             damageCircle.drawCircle(posCircle);
             damageCircles.push_back(damageCircle);*/
 
         }
-        
 
-        character.move(movement,deltaTime);
+        if (Fireball.canUse()) {
+            for (int i = 0; i < 2; i++) {
+                if (enemies.size() > 0) {
+                    int i = rand() % enemies.size();
+
+
+                    std::uniform_real_distribution<float> distX(enemies[i].getSprite().getPosition().x - SCREEN_WIDTH / 2, enemies[i].getSprite().getPosition().x + SCREEN_WIDTH / 2);
+                    std::uniform_real_distribution<float> distY(enemies[i].getSprite().getPosition().y - SCREEN_HEIGHT / 2, enemies[i].getSprite().getPosition().y + SCREEN_HEIGHT / 2);
+
+                    sf::Vector2f posTarget(distX(gen), distY(gen));
+                    sf::Vector2f posPlayer(character.getSprite().getPosition().x, character.getSprite().getPosition().y);
+                    FireBall fireball(posPlayer, posTarget);
+                    fireballs.push_back(fireball);
+                }
+            }
+            Fireball.use();
+        }
+
+        Fireball.update(deltaTime);
+        character.move(movement, deltaTime);
 
 
         view.setCenter(static_cast<sf::Vector2f>(character.getSprite().getPosition()));
         window.setView(view);
+        window.clear();
+        myMap.draw(window);
+        character.draw(window);
 
         sf::FloatRect playerBounds = character.getSprite().getGlobalBounds();
-  
+
         for (size_t i = 0; i < enemies.size(); ++i) {
             enemiesPositions.push_back(enemies[i].getSprite().getPosition());
             enemies[i].moveToPlayer(character.getSprite().getPosition(), 100.0f * deltaTime);
@@ -256,30 +276,16 @@ int main()
                 if (rate <= 20) {
                     item.push_back(Item(enemies[i].getSprite().getPosition(), ItemType::EXP));
                 }
-                    
-               
+
+
                 enemies.erase(enemies.begin() + i);
                 --i;
             }
 
         }
-        window.clear();
+    
 
-        myMap.draw(window);
-        character.draw(window);
-
-        for (auto it = damageCircles.begin(); it != damageCircles.end();) {
-            it->update(movementDeltaTime);
-            if (it->isActive()) {
-                it->draw(window);
-                ++it;
-            }
-            else
-            {
-                it = damageCircles.erase(it);
-            }
-        }
-
+        
         for (auto it = item.begin(); it != item.end();) {
             if (it->getPosition().getGlobalBounds().intersects(playerBounds)) {
                 character.collectItem(*it);
@@ -291,21 +297,24 @@ int main()
             }
         }
 
-        for (auto it = fireballs.begin(); it != fireballs.end();) {
-            it->updata(deltaTime);
-            it->draw(window);
-          ++it;
+        for(auto it = fireballs.begin(); it != fireballs.end();) {
+
+            std::cout << fireballs.size() << std::endl;
+            it->update(deltaTime);
+
+            if (it->checkCollisionWithEnemie(enemies) && fireballs.size() > 0) {
+                it = fireballs.erase(it);
+            }
+            else {;
+                it->draw(window);
+                ++it;
+            }
         }
 
         character.draw(window);
 
         for (auto& enemy : enemies) {
 
-            for (auto& damageCircle : damageCircles) {
-                if (damageCircle.isActive() && damageCircle.isEnemyInCircle(enemy)) {
-                    enemy.takeDamage(damageCircle.getDmg());
-                }
-            }
             enemy.draw(window);
         }
 
