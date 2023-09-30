@@ -77,23 +77,21 @@ bool FireBall::isOutOfScreen(float screenWidth, float screenHeight,sf::Vector2f 
 
 }
 
-bool FireBall::checkCollisionWithEnemie(std::vector<Enemy>& enemies)
-{
+bool FireBall::checkCollisionWithEnemie(std::vector<Enemy>& enemies) {
 
 	for (Enemy& enemy : enemies) {
-
-		if (Collision::pixelPerfectTest(enemy.getSprite(), sprite)&&enemies.size() > 0) {
+		 /*if(Collision::pixelPerfectTest(enemy.getSprite(), sprite) && enemies.size() > 0) {
 			enemy.takeDamage(100);
-			this->active = false;
+			return true;
+		}*/
+
+		if (enemy.getSprite().getGlobalBounds().intersects(sprite.getGlobalBounds())) {
+			enemy.takeDamage(100);
 			return true;
 		}
+
 	}
 	return false;
-}
-
-bool FireBall::isActive()
-{
-	return active;
 }
 
 

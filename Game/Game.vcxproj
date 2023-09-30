@@ -138,14 +138,12 @@
     <ClCompile Include="Collision.cpp" />
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="FireBall.cpp" />
-    <ClCompile Include="GameState.cpp" />
     <ClCompile Include="Item.cpp" />
     <ClCompile Include="Map.cpp" />
     <ClCompile Include="Menu.cpp" />
     <ClCompile Include="PauseMenu.cpp" />
     <ClCompile Include="player.cpp" />
     <ClCompile Include="Main.cpp" />
-    <ClCompile Include="playerHUD.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Ability.h" />
@@ -153,13 +151,11 @@
     <ClInclude Include="Collision.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="FireBall.h" />
-    <ClInclude Include="GameState.h" />
     <ClInclude Include="Item.h" />
     <ClInclude Include="Map.h" />
     <ClInclude Include="Menu.h" />
     <ClInclude Include="PauseMenu.h" />
     <ClInclude Include="player.h" />
-    <ClInclude Include="playerHUD.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

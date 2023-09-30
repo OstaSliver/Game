@@ -20,6 +20,7 @@ player::player(const std::string& texturePath, const sf::Vector2f& position) {
     HP = max_HP;
     max_Exp = 100;
     Exp = 0;
+    initHUD();
 
 }
 
@@ -39,13 +40,12 @@ void player::move(sf::Vector2f movement, float deltaTime) {
         sprite.setScale(-0.3f, 0.3f);
         movement.x -= speedmove * deltaTime;
     }
+    this->deltatime = deltaTime;
     this->sprite.move(movement);
 }
 
 
-void player::draw(sf::RenderWindow& window) {
-    window.draw(sprite);
-}
+
 
 sf::Sprite &player::getSprite() {
     return sprite;
@@ -55,6 +55,12 @@ void player::collectItem(Item& item) {
     if (item.getType() == ItemType::EXP) {
         levelUp(50);
     }
+    if (item.getType() == ItemType::HP) {
+		HP += 50;
+        if (HP > max_HP) {
+			HP = max_HP;
+		}
+	}
 }
 
 int player::getLevel() {
@@ -99,3 +105,53 @@ void player::levelUp(int exp_incress){
     }
 }
 
+void player::Render(sf::RenderWindow& window)
+{
+    RenderHUD(window);
+    window.draw(sprite);
+
+}
+
+void player::RenderHUD(sf::RenderWindow& window)
+{
+    sf::Vector2f playerPos = sprite.getPosition();
+	levelText.setString("Level: " + std::to_string(getLevel()));
+	hpText.setString("HP: " + std::to_string(getHP()) + " / " + std::to_string(getMaxHP()));
+	expText.setString("EXP: " + std::to_string(getExp()) + " / " + std::to_string(getMaxExp()));
+	Fps.setString("FPS: " + std::to_string(1.0f / deltatime));
+
+	levelText.setPosition(playerPos.x - 900.0f, playerPos.y - 500.0f);
+	hpText.setPosition(playerPos.x - 900.0f, playerPos.y - 470.0f);
+	expText.setPosition(playerPos.x - 900.0f, playerPos.y - 440.0f);
+	Fps.setPosition(playerPos.x - 900.0f, playerPos.y - 410.0f);
+
+	window.draw(levelText);
+	window.draw(hpText);
+	window.draw(expText);
+	window.draw(Fps);
+}
+
+void player::initHUD()
+{
+    if (!font.loadFromFile("Resource/font/Pixelpoint.ttf")) {
+        std::cerr << "Error loading font file" << std::endl;
+        return;
+    }
+
+    levelText.setFont(font);
+    levelText.setCharacterSize(30);
+    levelText.setFillColor(sf::Color::White);
+
+    hpText.setFont(font);
+    hpText.setCharacterSize(30);
+    hpText.setFillColor(sf::Color::White);
+
+    expText.setFont(font);
+    expText.setCharacterSize(30);
+    expText.setFillColor(sf::Color::White);
+
+    Fps.setFont(font);
+    Fps.setCharacterSize(30);
+    Fps.setFillColor(sf::Color::White);
+
+}

@@ -6,7 +6,8 @@ class PlayerHUD {
 public:
     PlayerHUD(player& playerObj);
 
-    void draw(sf::RenderWindow& window);
+    void draw(sf::RenderWindow& window, float deltatime);
+
 
 private:
     player& playerObj;
@@ -14,4 +15,5 @@ private:
     sf::Text levelText;
     sf::Text hpText;
     sf::Text expText;
+    sf::Text Fps;
 };

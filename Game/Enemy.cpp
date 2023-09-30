@@ -22,7 +22,6 @@ void Enemy::update(const sf::FloatRect& playerBounds) {
    
     if (sprite.getGlobalBounds().intersects(playerBounds)) {
         dead = true;
-        //takeDamage(10);
     }
 }
 
@@ -43,7 +42,7 @@ bool Enemy::colWithPlayer(const sf::FloatRect& playerBounds){
     EnemyBounds.top += 2;
     EnemyBounds.height -= 15;
 
-    EnemyBounds.width -= 15;
+    EnemyBounds.width -= 15;*/
 
     sf::RectangleShape boundsRect(sf::Vector2f(EnemyBounds.width, EnemyBounds.height));
 
@@ -51,8 +50,7 @@ bool Enemy::colWithPlayer(const sf::FloatRect& playerBounds){
     boundsRect.setOutlineColor(sf::Color::Red);
     boundsRect.setOutlineThickness(2);
     boundsRect.setFillColor(sf::Color::Transparent);
-    boundsRect.setPosition(EnemyBounds.left, EnemyBounds.top);*/
-
+    boundsRect.setPosition(EnemyBounds.left, EnemyBounds.top);
 
     return EnemyBounds.intersects(playerBounds);
 }

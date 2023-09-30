@@ -1,8 +1,10 @@
 #include "Ability.h"
 #include <SFML/Graphics.hpp>
+#include "FireBall.h"
 
 Ability::Ability(float cooldown) : cooldown(cooldown), elapsedTime(0.0f)
    {
+    
     this->isReady = true;
    }
 

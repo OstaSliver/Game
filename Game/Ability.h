@@ -15,6 +15,12 @@ public:
 
 
 private:
+    int level;
+    int amount;
+    int baseDamage;
+    int Area;
+    int speed;
+
     float cooldown;
     float elapsedTime;
     bool isReady;

@@ -11,7 +11,6 @@
 #include "Enemy.h"
 #include "Menu.h"
 #include "PauseMenu.h"
-#include "playerHUD.h"
 #include "Map.h"
 #include "circledamage.h"
 #include "Item.h"
@@ -26,26 +25,28 @@
 
 #define ENEMY_SPAWN_MARGIN 0.0f
 
+int runtime = 0;
+
 int main()
 {
     restart:
    // sf::RenderWindow window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Project Game", sf::Style::Fullscreen);
-   sf::RenderWindow window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Project Game");
-    
+    sf::RenderWindow window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Project Game");
+    window.setFramerateLimit(30);
+
     player character("Resource/sprite/character_Down.png", sf::Vector2f(9600.0f, 5400.0f));
 
     PauseMenu pauseMenu(window);
-    PlayerHUD playerHUD(character);
     Map myMap(SCREEN_WIDTH / 10, SCREEN_HEIGHT / 10);
     menu menu;
-    Ability Fireball(0.5);
+    Ability ability[3] = {1.5f,NULL,NULL};
 
     sf::Clock clock;
     sf::Clock movementClock;
     sf::View view(sf::FloatRect(0.0f, 0.0f, SCREEN_WIDTH, SCREEN_HEIGHT));
     sf::Time cooldown;
 
-    const sf::Time targetFrameTime = sf::seconds(1.0f / 60.0f); 
+    const sf::Time targetFrameTime = sf::seconds(1.0f / 30.0f); 
     sf::Clock frameClock;
 
 
@@ -88,7 +89,7 @@ int main()
                     }
                 }
 
-                if (event.key.code == sf::Keyboard::M) {
+                if (event.key.code == sf::Keyboard::M  ) {
                     goto restart;
                 }
 
@@ -147,8 +148,7 @@ int main()
             }
 
 
-            playerHUD.draw(window);
-            character.draw(window);
+            character.Render(window);
             pauseMenu.setPosition(character.getSprite().getPosition());
             pauseMenu.draw(window);
             window.display();
@@ -168,7 +168,7 @@ int main()
             //goto restart;
         }
 
-        if (enemies.size() <= 100) {
+        if (enemies.size() <= 20) {
 
 
             int edge = std::uniform_int_distribution<int>(0, 3)(gen);
@@ -231,8 +231,8 @@ int main()
 
         }
 
-        if (Fireball.canUse()) {
-            for (int i = 0; i < 2; i++) {
+        if (ability[0].canUse()) {
+            for (int i = 0; i < 1; i++) {
                 if (enemies.size() > 0) {
                     int i = rand() % enemies.size();
 
@@ -246,10 +246,11 @@ int main()
                     fireballs.push_back(fireball);
                 }
             }
-            Fireball.use();
+            ability[0].use();
         }
 
-        Fireball.update(deltaTime);
+        ability[0].update(deltaTime);
+
         character.move(movement, deltaTime);
 
 
@@ -257,11 +258,13 @@ int main()
         window.setView(view);
         window.clear();
         myMap.draw(window);
-        character.draw(window);
 
         sf::FloatRect playerBounds = character.getSprite().getGlobalBounds();
 
         for (size_t i = 0; i < enemies.size(); ++i) {
+
+            std::cout << enemies.size()<<std::endl;
+
             enemiesPositions.push_back(enemies[i].getSprite().getPosition());
             enemies[i].moveToPlayer(character.getSprite().getPosition(), 100.0f * deltaTime);
             enemies[i].update(playerBounds);
@@ -273,11 +276,13 @@ int main()
 
             if (enemies[i].isDead()) {
                 int rate = rand() % 100;
-                if (rate <= 20) {
-                    item.push_back(Item(enemies[i].getSprite().getPosition(), ItemType::EXP));
-                }
-
-
+                
+                 if (rate <= 3) {
+					item.push_back(Item(enemies[i].getSprite().getPosition(), ItemType::HP));
+				}
+                 else if (20 <= rate && rate <= 30) {
+                     item.push_back(Item(enemies[i].getSprite().getPosition(), ItemType::EXP));
+                 }
                 enemies.erase(enemies.begin() + i);
                 --i;
             }
@@ -285,7 +290,18 @@ int main()
         }
     
 
-        
+        for (auto it = damageCircles.begin(); it != damageCircles.end();) {
+            it->update(movementDeltaTime);
+            if (it->isActive()) {
+                it->draw(window);
+                ++it;
+            }
+            else
+            {
+                it = damageCircles.erase(it);
+            }
+        }
+
         for (auto it = item.begin(); it != item.end();) {
             if (it->getPosition().getGlobalBounds().intersects(playerBounds)) {
                 character.collectItem(*it);
@@ -297,29 +313,26 @@ int main()
             }
         }
 
-        for(auto it = fireballs.begin(); it != fireballs.end();) {
-
-            std::cout << fireballs.size() << std::endl;
+        for (auto it = fireballs.begin(); it != fireballs.end();) {
+            //std::cout << fireballs.size() << std::endl;
             it->update(deltaTime);
-
-            if (it->checkCollisionWithEnemie(enemies) && fireballs.size() > 0) {
+            if ((it->checkCollisionWithEnemie(enemies) || it->isOutOfScreen(SCREEN_WIDTH, SCREEN_HEIGHT, character.getSprite().getPosition())) && fireballs.size() > 0) {
                 it = fireballs.erase(it);
             }
-            else {;
+            else {
                 it->draw(window);
                 ++it;
             }
         }
 
-        character.draw(window);
+        character.Render(window);
 
         for (auto& enemy : enemies) {
 
             enemy.draw(window);
         }
-
-        playerHUD.draw(window);
-
+        character.Render(window);
         window.display();
+        
     }
 }

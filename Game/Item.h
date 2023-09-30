@@ -2,14 +2,16 @@
 #include <SFML/Graphics.hpp>
 
 enum class ItemType {
-    EXP
+    EXP,
+    HP
 };
 
 class Item
 {
 private:
     sf::Vector2f position;
-    sf::Sprite exp;
+    sf::Sprite item;
+    sf::Texture textureExp,textureHp, texture;
     ItemType type;
 
 

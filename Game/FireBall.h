@@ -10,7 +10,6 @@ public:
 	void draw(sf::RenderWindow& window);
 	bool isOutOfScreen(float screenWidth, float screenHeight,sf::Vector2f position);
 	bool checkCollisionWithEnemie(std::vector<Enemy>& enemies);
-	bool isActive();
 
 	sf::Sprite& getSprite();
 	
@@ -24,7 +23,5 @@ private:
 
 	int Animation = 0;
 	float time = 0.0f;
-
-	bool active = true;
 };
 
