@@ -10,6 +10,7 @@ public:
     bool isDead() ;
     void draw(sf::RenderWindow& window);
     bool colWithPlayer(const sf::FloatRect& playerBounds);
+    bool isOutOfScreen(float screenWidth, float screenHeight, sf::Vector2f playerPosition);
     void moveToPlayer(const sf::Vector2f& pos_Player, float speed);
     sf::Sprite& getSprite();
 

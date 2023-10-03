@@ -2,11 +2,11 @@
 #include <SFML/Graphics.hpp>
 #include "FireBall.h"
 
-Ability::Ability(float cooldown) : cooldown(cooldown), elapsedTime(0.0f)
-   {
+Ability::Ability(float cooldown, AbilityType abilityType): cooldown(cooldown), elapsedTime(0.0f), isReady(true), type(abilityType)
+{
     
-    this->isReady = true;
-   }
+
+}
 
     void Ability::update(float deltaTime) {
         if (!isReady) {
@@ -21,6 +21,12 @@ Ability::Ability(float cooldown) : cooldown(cooldown), elapsedTime(0.0f)
     bool Ability::canUse() const {
         return isReady;
     }
+
+    AbilityType Ability::getType() const
+    {
+        return type;
+    }
+
 
     void  Ability::use() {
         if (isReady) {

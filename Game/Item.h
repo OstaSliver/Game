@@ -3,7 +3,8 @@
 
 enum class ItemType {
     EXP,
-    HP
+    HP,
+    ExpBoost
 };
 
 class Item

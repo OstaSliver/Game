@@ -55,6 +55,13 @@ bool Enemy::colWithPlayer(const sf::FloatRect& playerBounds){
     return EnemyBounds.intersects(playerBounds);
 }
 
+bool Enemy::isOutOfScreen(float screenWidth, float screenHeight, sf::Vector2f playerPosition)
+{
+    sf::Vector2f position = sprite.getPosition();
+    
+    return (position.x  < playerPosition.x - screenWidth / 2 || position.x > playerPosition.x + screenWidth / 2 || position.y < playerPosition.y - screenHeight / 2 || position.y > playerPosition.y + screenHeight / 2);
+}
+
 bool Enemy::isDead(){
 
     return dead;

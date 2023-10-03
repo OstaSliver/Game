@@ -24,7 +24,7 @@ PauseMenu::PauseMenu(sf::RenderWindow& window)
 void PauseMenu::setPosition(const sf::Vector2f& playerPos)
 {
     float xOffset = 0.0f; 
-    float yOffset = 500.0f;  
+    float yOffset = 400.0f;  
 
     pauseText.setPosition(playerPos.x - xOffset, playerPos.y - yOffset);
     resumeText.setPosition(playerPos.x - xOffset-70, playerPos.y - yOffset+100);

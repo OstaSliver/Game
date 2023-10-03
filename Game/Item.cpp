@@ -25,6 +25,8 @@ void Item::draw(sf::RenderWindow& window) {
 		item.setTexture(textureExp);
 	else if(type == ItemType::HP)
 		item.setTexture(textureHp);
+	
+
 
 	window.draw(item);
 }
