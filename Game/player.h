@@ -26,6 +26,8 @@ public:
     int getHP();
     int getMaxExp();
     int getExp();
+    int getScore();
+    float getTimer();
     bool GetDead();
 
 

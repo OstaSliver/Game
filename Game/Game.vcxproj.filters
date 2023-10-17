@@ -48,6 +48,12 @@
     <ClCompile Include="Ability.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Passive.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SpawnMonster.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="player.h">
@@ -78,6 +84,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Ability.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Passive.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SpawnMonster.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

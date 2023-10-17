@@ -1,9 +1,11 @@
 ﻿#include <SFML/Graphics.hpp>
+#include <SFML/System/Time.hpp>
 #include <iostream>
 #include <vector>
 #include <random>
-#include <SFML/System/Time.hpp>
+#include <fstream>
 #include <memory>
+#include <sstream>
 
 #include "player.h"
 #include "Enemy.h"
@@ -19,9 +21,41 @@
 #define SCREEN_HEIGHT 1080
 #define ENEMY_SPAWN_MARGIN 0.0f
 
+
+void saveScore(std::string name, int score) {
+	std::ofstream file;
+	file.open("Resource/scoreboard.txt", std::ios::app);
+	file << name << " " << score << std::endl;
+	file.close();
+}
+
+void PrintScore(sf::Text *ScoreTop)
+{
+    std::ifstream file;
+	file.open("Resource/scoreboard.txt");
+	std::string line;
+	std::vector<std::pair<std::string, int>> scores;
+    while (std::getline(file, line)) {
+		std::istringstream iss(line);
+		std::string name;
+		int score;
+		iss >> name >> score;
+		scores.push_back(std::make_pair(name, score));
+	}
+	file.close();
+    std::sort(scores.begin(), scores.end(), [](const std::pair<std::string, int>& a, const std::pair<std::string, int>& b) {
+		return a.second > b.second;
+		});
+   
+    for (int i = 0; i < 5 &&  i < scores.size() ; i++) {
+        ScoreTop[i].setString("TOP " + std::to_string(i+1) + " : " + scores[i].first + " " + std::to_string(scores[i].second));
+    }
+    
+}
+
 int main()
 {
-restart:
+    restart:
     sf::RenderWindow window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Project Game");
     window.setFramerateLimit(30);
 
@@ -42,13 +76,19 @@ restart:
     sf::View view(sf::FloatRect(0.0f, 0.0f, SCREEN_WIDTH, SCREEN_HEIGHT));
     sf::Time cooldown;
 
+    sf::Text ScoreTop[5];
+    sf::Font font;
+    font.loadFromFile("Resource/font/Pixelpoint.ttf");
+
     const sf::Time targetFrameTime = sf::seconds(1.0f / 30.0f);
 
     sf::Clock frameClock;
 
     bool gameStarted = false;
-    bool Check_space = false;
     bool isPause = false;
+	bool enterName = false;
+    bool ShowScore = false;
+
     float deltaTime = 0.0f;
 
     std::vector<Enemy> enemies;
@@ -60,6 +100,9 @@ restart:
     std::random_device rd;
     std::mt19937 gen(rd());
 
+    std::string name;
+
+
     while (window.isOpen())
     {
         sf::Event event;
@@ -68,7 +111,12 @@ restart:
             if (event.type == sf::Event::Closed) {
                 window.close();
             }
-
+            if (event.type == sf::Event::GainedFocus) {
+                isPause = false;
+            }
+            if (event.type == sf::Event::LostFocus) {
+				isPause = true;
+			}
             if (event.type == sf::Event::KeyPressed) {
                 if (event.key.code == sf::Keyboard::Escape) {
                     if (gameStarted) {
@@ -97,6 +145,7 @@ restart:
         }
 
         if (event.type == sf::Event::MouseMoved || event.type == sf::Event::MouseButtonPressed) {
+
             menu.isHoverPlayButton(window.mapPixelToCoords(sf::Mouse::getPosition(window)));
             menu.isHoverScoreButton(window.mapPixelToCoords(sf::Mouse::getPosition(window)));
             menu.isHoverQuitButton(window.mapPixelToCoords(sf::Mouse::getPosition(window)));
@@ -105,10 +154,11 @@ restart:
                 sf::Vector2f mousePosition(sf::Vector2f(sf::Mouse::getPosition(window)));
 
                 if (menu.isPressPlayButton(mousePosition)) {
-                    gameStarted = true;
+                    enterName = true;
                 }
                 if (menu.isPressScoreButton(mousePosition)) {
-                    std::cout << "Score" << std::endl;
+                    PrintScore(ScoreTop);
+                    ShowScore = true;                    
                 }
                 if (menu.isPressQuitButton(mousePosition)) {
                     window.close();
@@ -117,6 +167,76 @@ restart:
         }
 
         float movementDeltaTime = movementClock.restart().asSeconds();
+
+
+       
+        if (enterName) {
+            sf::Text text;
+			text.setFont(font);
+			text.setCharacterSize(50);
+			text.setFillColor(sf::Color::White);
+			text.setPosition(SCREEN_WIDTH / 2 - 100, SCREEN_HEIGHT / 2 - 100);
+
+            while (enterName) {
+                sf::Event event;
+                while (window.pollEvent(event)) {
+                    if (event.type == sf::Event::TextEntered) {
+                        if (event.text.unicode < 128 && event.text.unicode > 32) {
+                            name += static_cast<char>(event.text.unicode);
+                            text.setString(name);
+                        }
+                    }
+                    if (event.type == sf::Event::KeyPressed) {
+                        if (event.key.code == sf::Keyboard::Enter) {
+                            enterName = false;
+                            gameStarted = true;
+                        }
+                        if (event.key.code == sf::Keyboard::BackSpace && !name.empty()) {
+                            name.pop_back();
+                            text.setString(name);
+                        }
+                    }
+                    if (event.type == sf::Event::Closed) {
+                        window.close();
+                        return 0;
+                    }
+                }
+                window.clear();
+                window.draw(text);
+                window.display();
+            }
+        }
+
+        if (ShowScore) {
+            
+            for (int i = 0; i < 5; i++) {
+                ScoreTop[i].setFont(font);
+                ScoreTop[i].setCharacterSize(45);
+                ScoreTop[i].setFillColor(sf::Color::White);
+                ScoreTop[i].setPosition(SCREEN_WIDTH / 2 - 200, SCREEN_HEIGHT / 2 - 100 + i * 50);
+            }
+            while (ShowScore)
+            {
+                sf::Event event;
+                while (window.pollEvent(event)) {
+                    if (event.type == sf::Event::KeyPressed) {
+                        if (event.key.code == sf::Keyboard::Escape) {
+                            ShowScore = false;
+                            break;
+                        }
+                    }
+                    if (event.type == sf::Event::Closed) {
+						window.close();
+                        return 0;
+					}
+                }
+                window.clear();
+                for (int i = 0; i < 5; i++) {
+                    window.draw(ScoreTop[i]);
+                }
+                window.display();
+            }
+        }
 
         if (!gameStarted) {
             window.clear();
@@ -148,12 +268,13 @@ restart:
         }
 
         if (character->GetDead()) {
+            saveScore(name, character->getScore());
             goto restart;
         }
 
-        if (enemies.size() <= 40) {
-            int edge = std::uniform_int_distribution<int>(0, 3)(gen);
+        if (enemies.size() <= 10) {
 
+            int edge = std::uniform_int_distribution<int>(0, 3)(gen);
             float spawnX, spawnY;
             sf::Vector2f playerPosition = character->getSprite().getPosition();
             switch (edge) {
@@ -198,18 +319,15 @@ restart:
         }
 
         if (ability[0].canUse()) {
-            for (int i = 0; i < 1; i++) {
+            for (int i = 0; i < 10; i++) {
                 if (enemies.size() > 0) {
-                    int randomIndex = rand() % enemies.size();
-                    sf::Vector2f enemyPosition = enemies[randomIndex].getSprite().getPosition();
+                    int i = rand() % enemies.size();
 
-                    sf::Vector2f distFromCenter;
-                    distFromCenter.x = enemyPosition.x - SCREEN_WIDTH / 2;
-                    distFromCenter.y = enemyPosition.y - SCREEN_HEIGHT / 2;
+                    std::uniform_real_distribution<float> distX(enemies[i].getSprite().getPosition().x - SCREEN_WIDTH / 2, enemies[i].getSprite().getPosition().x + SCREEN_WIDTH / 2);
+                    std::uniform_real_distribution<float> distY(enemies[i].getSprite().getPosition().y - SCREEN_HEIGHT / 2, enemies[i].getSprite().getPosition().y + SCREEN_HEIGHT / 2);
 
+                    sf::Vector2f posTarget(distX(gen), distY(gen));
                     sf::Vector2f posPlayer(character->getSprite().getPosition().x, character->getSprite().getPosition().y);
-                    sf::Vector2f posTarget = posPlayer + distFromCenter;
-
                     FireBall fireball(posPlayer, posTarget);
                     fireballs.push_back(fireball);
                 }

@@ -141,9 +141,11 @@
     <ClCompile Include="Item.cpp" />
     <ClCompile Include="Map.cpp" />
     <ClCompile Include="Menu.cpp" />
+    <ClCompile Include="Passive.cpp" />
     <ClCompile Include="PauseMenu.cpp" />
     <ClCompile Include="player.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="SpawnMonster.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Ability.h" />
@@ -154,8 +156,10 @@
     <ClInclude Include="Item.h" />
     <ClInclude Include="Map.h" />
     <ClInclude Include="Menu.h" />
+    <ClInclude Include="Passive.h" />
     <ClInclude Include="PauseMenu.h" />
     <ClInclude Include="player.h" />
+    <ClInclude Include="SpawnMonster.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

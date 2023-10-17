@@ -94,6 +94,16 @@ int player::getExp() {
     return Exp;
 }
 
+int player::getScore()
+{
+    return this->score;
+}
+
+float player::getTimer()
+{
+    return Timer;
+}
+
 bool player::GetDead(){
     return isDead;
 }
