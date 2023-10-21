@@ -30,7 +30,7 @@ player::player(const std::string& texturePath, const sf::Vector2f& position, Abi
     initHPBar();
     initExpBar();
     initScore();
-initTimer();
+    initTimer();
 
 }
 
@@ -65,7 +65,7 @@ sf::Sprite &player::getSprite() {
 
 void player::collectItem(Item& item) {
     if (item.getType() == ItemType::EXP) {
-        levelUp(50);
+        ExpUp(50);
     }
     if (item.getType() == ItemType::HP) {
 		HP += 50;
@@ -108,6 +108,11 @@ bool player::GetDead(){
     return isDead;
 }
 
+bool player::GetLevelUp()
+{
+    return isLevelUp;
+}
+
 void player::takeDamage(int damage) {
     HP -= damage;
 
@@ -116,14 +121,15 @@ void player::takeDamage(int damage) {
     }
 }
 
-void player::levelUp(int exp_incress){
+void player::ExpUp(int exp_incress){
     Exp += exp_incress;
     if (Exp >= max_Exp) {
         level++;
         max_HP += 20;
         HP = max_HP;
         Exp -= max_Exp;
-        max_Exp = (level*750);
+        max_Exp = (level*500);
+        isLevelUp = true;
     }
 }
 

@@ -13,12 +13,14 @@ public:
     player(const std::string& texturePath, const sf::Vector2f& position, Ability *abilit);
     void move(const sf::Vector2f movement, float deltaTime);
     void takeDamage(int damage);
-    void levelUp(int exp_incress);
+    void ExpUp(int exp_incress);
     void updateScore(int score);
     void Render(sf::RenderWindow& window);
     void RenderHUD(sf::RenderWindow& window);
 
     sf::Sprite& getSprite();
+    bool isLevelUp = false;
+
     void collectItem(Item& item);
 
     int getLevel();
@@ -29,7 +31,7 @@ public:
     int getScore();
     float getTimer();
     bool GetDead();
-
+    bool GetLevelUp();
 
 private:
     sf::Texture texture;
@@ -59,7 +61,6 @@ private:
     int max_Exp, Exp;
     int score = 0;
     bool isDead = false;
-
     float deltatime;
     float Timer = 0;
 

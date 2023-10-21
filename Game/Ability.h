@@ -9,6 +9,13 @@ enum class AbilityType {
     FireWall,
 };
 
+struct AbilityInfo {
+	int level;
+	int amount;
+	int baseDamage;
+	int Area;
+	int speed;
+};
 
 class Ability {
 
@@ -23,14 +30,9 @@ public:
 
 
 private:
+    
     AbilityType type;
-
-    /*int level;
-    int amount;
-    int baseDamage;
-    int Area;
-    int speed;*/
-
+    
     float cooldown;
     float elapsedTime;
     bool isReady;

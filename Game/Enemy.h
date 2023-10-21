@@ -17,7 +17,6 @@ public:
 private:
     sf::Sprite sprite;
     sf::Texture texture;
-
     int maxHP;
     int currentHP;
     bool dead;

@@ -1,5 +1,6 @@
 ﻿#include <SFML/Graphics.hpp>
 #include <SFML/System/Time.hpp>
+
 #include <iostream>
 #include <vector>
 #include <random>
@@ -16,6 +17,7 @@
 #include "Item.h"
 #include "FireBall.h"
 #include "Ability.h"
+#include "LevelUpGui.h"
 
 #define SCREEN_WIDTH 1920
 #define SCREEN_HEIGHT 1080
@@ -56,7 +58,7 @@ void PrintScore(sf::Text *ScoreTop)
 int main()
 {
     restart:
-    sf::RenderWindow window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Project Game");
+    sf::RenderWindow window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Project Game" /*, sf::Style::Fullscreen*/);
     window.setFramerateLimit(30);
 
     Ability ability[3] = {
@@ -70,6 +72,7 @@ int main()
     PauseMenu pauseMenu(window);
     Map myMap(SCREEN_WIDTH / 10, SCREEN_HEIGHT / 10);
     menu menu;
+    LevelUpGui levelUpGui(window);
 
     sf::Clock clock;
     sf::Clock movementClock;
@@ -78,7 +81,7 @@ int main()
 
     sf::Text ScoreTop[5];
     sf::Font font;
-    font.loadFromFile("Resource/font/Pixelpoint.ttf");
+    font.loadFromFile("Resource/font/Super Boys.ttf");
 
     const sf::Time targetFrameTime = sf::seconds(1.0f / 30.0f);
 
@@ -88,10 +91,13 @@ int main()
     bool isPause = false;
 	bool enterName = false;
     bool ShowScore = false;
+    bool Credit = false;
 
     float deltaTime = 0.0f;
 
     std::vector<Enemy> enemies;
+    std::vector<Enemy> enemies2;
+
     std::vector<sf::Vector2f> enemiesPositions;
     std::vector<circledamage> damageCircles;
     std::vector<Item> item;
@@ -148,6 +154,7 @@ int main()
 
             menu.isHoverPlayButton(window.mapPixelToCoords(sf::Mouse::getPosition(window)));
             menu.isHoverScoreButton(window.mapPixelToCoords(sf::Mouse::getPosition(window)));
+            menu.isHoverCreditButton(window.mapPixelToCoords(sf::Mouse::getPosition(window)));
             menu.isHoverQuitButton(window.mapPixelToCoords(sf::Mouse::getPosition(window)));
 
             if (event.mouseButton.button == sf::Mouse::Left) {
@@ -160,6 +167,9 @@ int main()
                     PrintScore(ScoreTop);
                     ShowScore = true;                    
                 }
+                if (menu.isPressCreditButton(mousePosition)) {
+					Credit = true;
+				}
                 if (menu.isPressQuitButton(mousePosition)) {
                     window.close();
                 }
@@ -171,49 +181,89 @@ int main()
 
        
         if (enterName) {
+            
             sf::Text text;
+            sf::Text title;
+            sf::Text Enter;
 			text.setFont(font);
 			text.setCharacterSize(50);
 			text.setFillColor(sf::Color::White);
-			text.setPosition(SCREEN_WIDTH / 2 - 100, SCREEN_HEIGHT / 2 - 100);
+			text.setPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 100);
+            text.setOrigin(text.getGlobalBounds().width / 2, text.getGlobalBounds().height / 2);
+            title.setFont(font);
+            title.setCharacterSize(50);
+            title.setFillColor(sf::Color::White);
+            title.setPosition(SCREEN_WIDTH / 2 - 300 , SCREEN_HEIGHT / 2 - 200);
+            title.setOrigin(title.getGlobalBounds().width / 2, title.getGlobalBounds().height / 2);
+            title.setString("Enter your name");
+            Enter.setFont(font);
+            Enter.setCharacterSize(50);
+            Enter.setFillColor(sf::Color::White);
+            Enter.setPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 );
+            Enter.setOrigin(Enter.getGlobalBounds().width / 2, Enter.getGlobalBounds().height / 2);
+            Enter.setString("Press Enter to continue");
 
             while (enterName) {
                 sf::Event event;
                 while (window.pollEvent(event)) {
-                    if (event.type == sf::Event::TextEntered) {
+                    if (event.type == sf::Event::TextEntered && name.size() < 12 ) {
+
                         if (event.text.unicode < 128 && event.text.unicode > 32) {
                             name += static_cast<char>(event.text.unicode);
-                            text.setString(name);
+                            
                         }
+
                     }
                     if (event.type == sf::Event::KeyPressed) {
+
                         if (event.key.code == sf::Keyboard::Enter) {
                             enterName = false;
                             gameStarted = true;
                         }
                         if (event.key.code == sf::Keyboard::BackSpace && !name.empty()) {
                             name.pop_back();
-                            text.setString(name);
+                            
                         }
+
                     }
                     if (event.type == sf::Event::Closed) {
                         window.close();
                         return 0;
                     }
+                    text.setOrigin(text.getGlobalBounds().width / 2, text.getGlobalBounds().height / 2);
+                    text.setString(name);
                 }
                 window.clear();
                 window.draw(text);
+                window.draw(title);
+                window.draw(Enter);
                 window.display();
             }
         }
 
         if (ShowScore) {
-            
+            sf::Text title;
+            sf::Text returnText;
+
+            title.setFont(font);
+            title.setCharacterSize(50);
+            title.setFillColor(sf::Color::White);
+            title.setPosition(SCREEN_WIDTH / 2 - 300, SCREEN_HEIGHT / 2 - 200);
+            title.setOrigin(title.getGlobalBounds().width / 2, title.getGlobalBounds().height / 2);
+            title.setString("Scoreboard");
+
+            returnText.setFont(font);
+            returnText.setCharacterSize(50);
+            returnText.setFillColor(sf::Color::White);
+            returnText.setPosition(0+20, SCREEN_HEIGHT/2+320);
+            returnText.setOrigin(returnText.getGlobalBounds().width / 2, returnText.getGlobalBounds().height / 2);
+            returnText.setString("Press Esc to return");
+
             for (int i = 0; i < 5; i++) {
                 ScoreTop[i].setFont(font);
                 ScoreTop[i].setCharacterSize(45);
                 ScoreTop[i].setFillColor(sf::Color::White);
-                ScoreTop[i].setPosition(SCREEN_WIDTH / 2 - 200, SCREEN_HEIGHT / 2 - 100 + i * 50);
+                ScoreTop[i].setPosition(SCREEN_WIDTH / 2 - 300, SCREEN_HEIGHT / 2 - 100 + i * 50);
             }
             while (ShowScore)
             {
@@ -234,10 +284,64 @@ int main()
                 for (int i = 0; i < 5; i++) {
                     window.draw(ScoreTop[i]);
                 }
+                window.draw(title);
+                window.draw(returnText);
                 window.display();
             }
         }
 
+        if (Credit) {
+            sf::Text title;
+            sf::Text returnText;
+            while (Credit) {
+                title.setFont(font);
+                title.setCharacterSize(50);
+                title.setFillColor(sf::Color::White);
+                title.setPosition(SCREEN_WIDTH / 2 - 300, SCREEN_HEIGHT / 2 - 200);
+                title.setOrigin(title.getGlobalBounds().width / 2, title.getGlobalBounds().height / 2);
+                title.setString("Credit");
+
+                returnText.setFont(font);
+                returnText.setCharacterSize(50);
+                returnText.setFillColor(sf::Color::White);
+                returnText.setPosition(0 + 20, SCREEN_HEIGHT / 2 + 320);
+                returnText.setOrigin(returnText.getGlobalBounds().width / 2, returnText.getGlobalBounds().height / 2);
+                returnText.setString("Press Esc to return");
+
+                sf::Text text;
+
+                text.setFont(font);
+                text.setCharacterSize(45);
+                text.setFillColor(sf::Color::White);
+                text.setPosition(SCREEN_WIDTH / 2 - 300, SCREEN_HEIGHT / 2 - 100);
+                text.setString("Sorasak limthong 66010840");
+
+
+                while (Credit)
+                {
+                    sf::Event event;
+                    while (window.pollEvent(event)) {
+                        if (event.type == sf::Event::KeyPressed) {
+                            if (event.key.code == sf::Keyboard::Escape) {
+                                Credit = false;
+                                break;
+                            }
+                        }
+                        if (event.type == sf::Event::Closed) {
+                            window.close();
+                            return 0;
+                        }
+                    }
+                    window.clear();
+
+                    window.draw(text);
+
+                    window.draw(title);
+                    window.draw(returnText);
+                    window.display();
+                }
+            }
+        }
         if (!gameStarted) {
             window.clear();
             menu.draw(window);
@@ -245,7 +349,7 @@ int main()
             continue;
         }
 
-        if (isPause) {
+        if (isPause&&!character->GetLevelUp()) {
             deltaTime = 0.0f;
             myMap.draw(window);
 
@@ -271,7 +375,25 @@ int main()
             saveScore(name, character->getScore());
             goto restart;
         }
+        if (character->GetLevelUp()) {
+            deltaTime = 0.0f;
+            myMap.draw(window);
+            for (auto& enemy : enemies) {
+                enemy.draw(window);
+            }
+            for (auto it = damageCircles.begin(); it != damageCircles.end(); it++) {
+                it->draw(window);
+            }
+            for (auto it = item.begin(); it != item.end(); it++) {
+                it->draw(window);
+            }
 
+            character->Render(window);
+            levelUpGui.setPosition(character->getSprite().getPosition());
+            levelUpGui.Render(window);
+            window.display();
+            continue;
+        }
         if (enemies.size() <= 10) {
 
             int edge = std::uniform_int_distribution<int>(0, 3)(gen);
@@ -319,7 +441,7 @@ int main()
         }
 
         if (ability[0].canUse()) {
-            for (int i = 0; i < 10; i++) {
+            for (int i = 0; i < 1; i++) {
                 if (enemies.size() > 0) {
                     int i = rand() % enemies.size();
 
@@ -352,7 +474,7 @@ int main()
 
             if (enemies[i].colWithPlayer(playerBounds)) {
                 character->takeDamage(10);
-                character->levelUp(20);
+                character->ExpUp(20);
             }
 
             if (enemies[i].isDead()) {
@@ -397,6 +519,7 @@ int main()
         for (auto& enemy : enemies) {
             enemy.draw(window);
         }
+        
         character->Render(window);
 
         window.display();

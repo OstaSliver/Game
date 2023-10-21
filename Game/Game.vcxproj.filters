@@ -48,10 +48,10 @@
     <ClCompile Include="Ability.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Passive.cpp">
+    <ClCompile Include="SpawnMonster.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SpawnMonster.cpp">
+    <ClCompile Include="LevelUpGui.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -86,10 +86,10 @@
     <ClInclude Include="Ability.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Passive.h">
+    <ClInclude Include="SpawnMonster.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SpawnMonster.h">
+    <ClInclude Include="LevelUpGui.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
