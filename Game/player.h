@@ -22,7 +22,7 @@ public:
     bool isLevelUp = false;
 
     void collectItem(Item& item);
-
+    void initAbility();
     int getLevel();
     int getMaxHP();
     int getHP();
@@ -63,10 +63,9 @@ private:
     bool isDead = false;
     float deltatime;
     float Timer = 0;
-
+    float speedmove = 200.0;
 
     void initAbilitySpace();
-    void initAbility();
     void initHUD();
     void initHPBar();
     void initExpBar();

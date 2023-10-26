@@ -15,6 +15,10 @@ Enemy::Enemy(const sf::Vector2f& position): maxHP(100), currentHP(100), dead(fal
     sprite.setScale(0.5,0.5);
     sprite.setOrigin(static_cast<float>(texture.getSize().x )/ 2, static_cast<float>(texture.getSize().y / 2));
     sprite.setPosition(position);
+    EnemyBounds.left += 5;
+    EnemyBounds.top += 2;
+    EnemyBounds.height -= 15;
+    EnemyBounds.width -= 15;
 
 }
 
@@ -27,7 +31,6 @@ void Enemy::update(const sf::FloatRect& playerBounds) {
 
 void Enemy::takeDamage(int damage) { 
     currentHP -= damage;
-
     if (currentHP <= 0) {
         dead = true;
     }
@@ -35,32 +38,30 @@ void Enemy::takeDamage(int damage) {
 
 bool Enemy::colWithPlayer(const sf::FloatRect& playerBounds){
 
-   
     sf::FloatRect EnemyBounds = sprite.getGlobalBounds();
-    
-    /*EnemyBounds.left += 5;
-    EnemyBounds.top += 2;
-    EnemyBounds.height -= 15;
 
-    EnemyBounds.width -= 15;*/
-
-    sf::RectangleShape boundsRect(sf::Vector2f(EnemyBounds.width, EnemyBounds.height));
-
-
-    boundsRect.setOutlineColor(sf::Color::Red);
-    boundsRect.setOutlineThickness(2);
-    boundsRect.setFillColor(sf::Color::Transparent);
-    boundsRect.setPosition(EnemyBounds.left, EnemyBounds.top);
 
     return EnemyBounds.intersects(playerBounds);
 }
 
-bool Enemy::isOutOfScreen(float screenWidth, float screenHeight, sf::Vector2f playerPosition)
+void Enemy::colWithOtherEnemy(std::vector<Enemy>& enemies)
 {
-    sf::Vector2f position = sprite.getPosition();
-    
-    return (position.x  < playerPosition.x - screenWidth / 2 || position.x > playerPosition.x + screenWidth / 2 || position.y < playerPosition.y - screenHeight / 2 || position.y > playerPosition.y + screenHeight / 2);
+    if (enemies.size() == 0)
+    {
+		return;
+	}
+    for (int i = 0; i < enemies.size(); i++)
+    {
+        if (enemies[i].getSprite().getGlobalBounds().intersects(sprite.getGlobalBounds()) && enemies[i].getSprite().getPosition() != sprite.getPosition())
+        {
+			sf::Vector2f direction = sprite.getPosition() - enemies[i].getSprite().getPosition();
+			float length = std::sqrt(direction.x * direction.x + direction.y * direction.y);
+			direction /= length;
+			sprite.move(direction * 1.5f);
+		}
+	}
 }
+
 
 bool Enemy::isDead(){
 
@@ -72,6 +73,13 @@ void Enemy::draw(sf::RenderWindow& window) {
     window.draw(sprite);
 }
 
+
+
+void Enemy::drawHp(sf::RenderWindow& window)
+{
+
+}
+
 void Enemy::moveToPlayer(const sf::Vector2f& playerPosition, float speed) {
 
 
@@ -80,7 +88,7 @@ void Enemy::moveToPlayer(const sf::Vector2f& playerPosition, float speed) {
     float length = std::sqrt(direction.x * direction.x + direction.y * direction.y);
     direction /= length;
 
-
+    
     sprite.move(direction * speed);
 }
 

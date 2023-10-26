@@ -9,10 +9,11 @@
 
 #define M_PI 3.14
 
-FireBall::FireBall(sf::Vector2f& position, sf::Vector2f target) {
+FireBall::FireBall(sf::Vector2f& position, sf::Vector2f target, float damage) {
 	this->Target = target;
-	this->direction = this->Target - position;
+	this->damage = damage;
 
+    this->direction = this->Target - position;
 	float length = std::sqrt(direction.x * direction.x + direction.y * direction.y);
 	this->direction /= length;
 
@@ -80,20 +81,15 @@ bool FireBall::isOutOfScreen(float screenWidth, float screenHeight,sf::Vector2f 
 bool FireBall::checkCollisionWithEnemie(std::vector<Enemy>& enemies) {
 
 	for (Enemy& enemy : enemies) {
-		 /*if(Collision::pixelPerfectTest(enemy.getSprite(), sprite) && enemies.size() > 0) {
-			enemy.takeDamage(100);
-			return true;
-		}*/
 
 		if (enemy.getSprite().getGlobalBounds().intersects(sprite.getGlobalBounds())) {
-			enemy.takeDamage(100);
+			enemy.takeDamage(damage);
 			return true;
 		}
 
 	}
 	return false;
 }
-
 
 sf::Sprite& FireBall::getSprite()
 {

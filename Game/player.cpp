@@ -20,7 +20,7 @@ player::player(const std::string& texturePath, const sf::Vector2f& position, Abi
     level = 1;
     max_HP = 100;
     HP = max_HP;
-    max_Exp = 100;
+    max_Exp = 5;
     Exp = 0;
     score = 0;
 
@@ -35,7 +35,6 @@ player::player(const std::string& texturePath, const sf::Vector2f& position, Abi
 }
 
 void player::move(sf::Vector2f movement, float deltaTime) {
-    float speedmove = 200.0;
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
         movement.y -= speedmove * deltaTime;
     }
@@ -51,6 +50,17 @@ void player::move(sf::Vector2f movement, float deltaTime) {
         movement.x -= speedmove * deltaTime;
 
     } 
+    if (sf::Joystick::isConnected(0)) {
+        float x = sf::Joystick::getAxisPosition(0, sf::Joystick::X);
+        float y = sf::Joystick::getAxisPosition(0, sf::Joystick::Y);
+        if (x > 20.0f || x < -20.0f || y < -20.0f || y > 20.0f) {
+            sf::Vector2f direction(x, y);
+            float length = std::sqrt(direction.x * direction.x + direction.y * direction.y);
+            direction /= length;
+            movement = direction * speedmove * deltaTime;
+        }
+
+    }
     this->Timer += deltaTime;
     this->deltatime = deltaTime;
     this->sprite.move(movement);
@@ -65,7 +75,7 @@ sf::Sprite &player::getSprite() {
 
 void player::collectItem(Item& item) {
     if (item.getType() == ItemType::EXP) {
-        ExpUp(50);
+        ExpUp(1);
     }
     if (item.getType() == ItemType::HP) {
 		HP += 50;
@@ -128,7 +138,7 @@ void player::ExpUp(int exp_incress){
         max_HP += 20;
         HP = max_HP;
         Exp -= max_Exp;
-        max_Exp = (level*500);
+        max_Exp += 10;
         isLevelUp = true;
     }
 }
@@ -180,12 +190,14 @@ void player::RenderHUD(sf::RenderWindow& window)
 	}
 
     AbilitySprite[0].setPosition(playerPos.x - 950.0f, playerPos.y - 490.0f);
+    AbilitySprite[1].setPosition(playerPos.x - 890.0f, playerPos.y - 490.0f);
 
     for (int i = 0; i < 3; i++) {
         window.draw(AbilitySpace[i]);
+        window.draw(AbilitySprite[i]);
+
    	}
 
-    window.draw(AbilitySprite[0]);
     window.draw(hpBarBack);
     window.draw(hpBar);
     window.draw(expBarBack);
@@ -221,6 +233,11 @@ void player::initAbility()
             AbilitySprite[i].setTexture(AbilityTexture[i]);
             AbilitySprite[i].setScale(0.4f, 0.4f);
         }
+        if (AbilityType::CircleDamage == ability[i].getType()) {
+			AbilityTexture[i].loadFromFile("Resource/sprite/Item/Circle.png");
+			AbilitySprite[i].setTexture(AbilityTexture[i]);
+			AbilitySprite[i].setScale(0.4f, 0.4f);
+		}
 	}
 }
 

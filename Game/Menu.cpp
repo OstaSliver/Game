@@ -6,10 +6,49 @@
 #define SCREEN_HEIGHT 1080
 
 menu::menu() {
+    selectedButtonIndex = 0;
     init();
 }
-void menu::draw(sf::RenderWindow& window) {
+menu::~menu()
+{
 
+}
+void menu::draw(sf::RenderWindow& window) {
+    if (selectedButtonIndex == 0)
+    {
+		play_button.setFillColor(sf::Color::Green);
+		score_button.setFillColor(sf::Color::Red);
+		credit_button.setFillColor(sf::Color::Red);
+		quit_button.setFillColor(sf::Color::Red);
+	}
+    else if (selectedButtonIndex == 1)
+    {
+		play_button.setFillColor(sf::Color::Red);
+		score_button.setFillColor(sf::Color::Green);
+		credit_button.setFillColor(sf::Color::Red);
+		quit_button.setFillColor(sf::Color::Red);
+	}
+    else if (selectedButtonIndex == 2)
+    {
+		play_button.setFillColor(sf::Color::Red);
+		score_button.setFillColor(sf::Color::Red);
+		credit_button.setFillColor(sf::Color::Green);
+		quit_button.setFillColor(sf::Color::Red);
+	}
+    else if (selectedButtonIndex == 3)
+    {
+		play_button.setFillColor(sf::Color::Red);
+		score_button.setFillColor(sf::Color::Red);
+		credit_button.setFillColor(sf::Color::Red);
+		quit_button.setFillColor(sf::Color::Green);
+	}
+    else
+    {
+		play_button.setFillColor(sf::Color::Red);
+		score_button.setFillColor(sf::Color::Red);
+		credit_button.setFillColor(sf::Color::Red);
+		quit_button.setFillColor(sf::Color::Red);
+	}
     window.draw(background);
     window.draw(play_button);
     window.draw(score_button);
@@ -94,7 +133,6 @@ void menu::init()
 
     titleText.setFont(titleFont);
     titleText.setString("The Last Survivor");
-    //titleText.setString("knight survivors");
     titleText.setCharacterSize(150);
     titleText.setFillColor(sf::Color::Color(255,128, 0, 255));
     titleText.setOrigin(titleText.getGlobalBounds().width / 2, titleText.getGlobalBounds().height / 2);
@@ -122,39 +160,54 @@ bool menu::isPressQuitButton(sf::Vector2f mousePosition) {
 void menu::isHoverPlayButton(sf::Vector2f mosuePos)
 {
     if (play_button.getGlobalBounds().contains(static_cast<sf::Vector2f>(mosuePos))) {
-		play_button.setFillColor(sf::Color::Green);
-	}
-    else {
-		play_button.setFillColor(sf::Color::Red);
-	}
+        selectedButtonIndex = 0;
+    }
 }
 
 void menu::isHoverScoreButton(sf::Vector2f mosuePos)
 {
     if (score_button.getGlobalBounds().contains(static_cast<sf::Vector2f>(mosuePos))) {
-		score_button.setFillColor(sf::Color::Green);
-	}
-    else {
-		score_button.setFillColor(sf::Color::Red);
-	}
+        selectedButtonIndex = 1;
+    }
 }
 
 void menu::isHoverCreditButton(sf::Vector2f mosuePos)
 {
     if (credit_button.getGlobalBounds().contains(static_cast<sf::Vector2f>(mosuePos))) {
-		credit_button.setFillColor(sf::Color::Green);
-	}
-    else {
-		credit_button.setFillColor(sf::Color::Red);
+		selectedButtonIndex = 2;
 	}
 }
 
 void menu::isHoverQuitButton(sf::Vector2f mosuePos)
 {
+
     if (quit_button.getGlobalBounds().contains(static_cast<sf::Vector2f>(mosuePos))) {
-		quit_button.setFillColor(sf::Color::Green);
+        selectedButtonIndex = 3;
+    }
+}
+
+void menu::moveUp()
+{
+    if (selectedButtonIndex >= 0)
+    {
+		selectedButtonIndex--;
 	}
-    else {
-		quit_button.setFillColor(sf::Color::Red);
+
+    if (selectedButtonIndex == -1)
+    {
+		selectedButtonIndex = 3;
 	}
+}
+
+void menu::moveDown()
+{
+    if (selectedButtonIndex <= 3)
+    {
+		selectedButtonIndex++;
+	}
+    
+    if (selectedButtonIndex > 3)
+    {
+        selectedButtonIndex = 0;
+    }
 }

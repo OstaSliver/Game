@@ -10,3 +10,9 @@ ruth 484
 asd 120
 testpoint 81
 testmonster 32
+a 36
+ 63
+ 26
+aadsd 111
+adasdsad 30
+oat 224

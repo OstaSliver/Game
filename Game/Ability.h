@@ -1,12 +1,10 @@
-#ifndef ABILITY_H
-#define ABILITY_H
+#pragma once
+#include <SFML/Graphics.hpp>
 
 enum class AbilityType {
     None,
     FireBall,
-    IceBall,
-    LightningBall,
-    FireWall,
+    CircleDamage,
 };
 
 struct AbilityInfo {
@@ -15,6 +13,9 @@ struct AbilityInfo {
 	int baseDamage;
 	int Area;
 	int speed;
+    float radius;
+    float duration;
+    float Hitboxdelay;
 };
 
 class Ability {
@@ -22,20 +23,19 @@ class Ability {
 public:
     Ability(float cooldown,AbilityType abilityType);
 
-    void update(float deltaTime);
+    AbilityInfo abilityInfo;
 
+    void update(float deltaTime);
+    void LevelUp();
     bool canUse() const;
     AbilityType getType() const;
     void use();
 
-
 private:
     
     AbilityType type;
-    
     float cooldown;
     float elapsedTime;
     bool isReady;
 };
 
-#endif 

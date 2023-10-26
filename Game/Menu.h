@@ -5,6 +5,10 @@ class menu
 {
 public:
 	menu();
+
+	~menu();
+	int selectedButtonIndex;
+
 	void draw(sf::RenderWindow& window);
 
 	void init();
@@ -18,6 +22,9 @@ public:
 	void isHoverScoreButton(sf::Vector2f mosuePos);
 	void isHoverCreditButton(sf::Vector2f mosuePos);
 	void isHoverQuitButton(sf::Vector2f mosuePos);
+
+	void moveUp();
+	void moveDown();
 
 private:
 	sf::Text playText;
@@ -36,4 +43,5 @@ private:
 	sf::RectangleShape score_button;
 	sf::RectangleShape credit_button;
 	sf::RectangleShape quit_button;
+
 };

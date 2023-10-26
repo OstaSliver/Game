@@ -7,16 +7,20 @@ public:
 
     void update(const sf::FloatRect& playerBounds);
     void takeDamage(int damage);
+
     bool isDead() ;
-    void draw(sf::RenderWindow& window);
     bool colWithPlayer(const sf::FloatRect& playerBounds);
-    bool isOutOfScreen(float screenWidth, float screenHeight, sf::Vector2f playerPosition);
+
+    void draw(sf::RenderWindow& window);
+    void drawHp(sf::RenderWindow& window);
+    void colWithOtherEnemy(std::vector<Enemy>& enemies);
     void moveToPlayer(const sf::Vector2f& pos_Player, float speed);
     sf::Sprite& getSprite();
 
 private:
     sf::Sprite sprite;
     sf::Texture texture;
+    sf::FloatRect EnemyBounds = sprite.getGlobalBounds();
     int maxHP;
     int currentHP;
     bool dead;
