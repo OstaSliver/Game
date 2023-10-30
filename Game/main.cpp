@@ -47,6 +47,7 @@ void PrintScore(sf::Text *ScoreTop)
    
     for (int i = 0; i < 5 &&  i < scores.size() ; i++) {
         ScoreTop[i].setString("TOP " + std::to_string(i+1) + " : " + scores[i].first + " " + std::to_string(scores[i].second));
+
     }
     
 }
@@ -55,7 +56,7 @@ void PrintScore(sf::Text *ScoreTop)
 int main()
 {
 restart:
-    sf::RenderWindow window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "THE LAST SURVIVOR" , sf::Style::Fullscreen);
+    sf::RenderWindow window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "THE LAST SURVIVOR" /*, sf::Style::Fullscreen*/);
     window.setFramerateLimit(30);
 
     Ability ability[3] = {
@@ -79,6 +80,7 @@ restart:
 
     sf::Text ScoreTop[5];
     sf::Font font;
+
     font.loadFromFile("Resource/font/Super Boys.ttf");
 
     const sf::Time targetFrameTime = sf::seconds(1.0f / 30.0f);
